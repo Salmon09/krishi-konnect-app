@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1a1200">
+<meta name="theme-color" content="#ffffff">
 <meta name="description" content="KrishiKonnect — AI-powered crop intelligence platform for Indian farmers and agronomists">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -52,7 +52,7 @@
   </div>
   <div class="install-actions">
     <button class="btn btn-primary btn-sm" id="install-btn">Install</button>
-    <button class="btn btn-ghost btn-sm" onclick="dismissInstall()" style="color:#8a9a80;border-color:#3d3200">Later</button>
+    <button class="btn btn-ghost btn-sm" onclick="dismissInstall()">Later</button>
   </div>
 </div>
 
@@ -88,6 +88,10 @@
       </div>
       <button class="btn btn-primary btn-full" onclick="doRegister()" style="margin-top:4px">Create Free Account</button>
       <div class="gate-footer">Already registered? <span onclick="switchGateTab('login')">Sign in here</span></div>
+      
+      <!-- FAILSAFE DEMO BUTTON -->
+      <button class="btn btn-ghost btn-sm btn-full" onclick="demoBypass()" style="margin-top:16px; border:1px dashed var(--border); color:var(--dim);">Skip & Continue as Guest</button>
+
       <div class="gate-trust">
         <div class="gate-trust-item"><strong>12,000+</strong>Farmers</div>
         <div class="gate-trust-item"><strong>28</strong>States</div>
@@ -101,6 +105,9 @@
       <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn btn-primary btn-full" onclick="doLogin()" style="margin-top:4px">Sign In</button>
       <div class="gate-footer">New to KrishiKonnect? <span onclick="switchGateTab('register')">Create free account</span></div>
+      
+      <!-- FAILSAFE DEMO BUTTON -->
+      <button class="btn btn-ghost btn-sm btn-full" onclick="demoBypass()" style="margin-top:16px; border:1px dashed var(--border); color:var(--dim);">Skip & Continue as Guest</button>
     </div>
   </div>
 </div>
@@ -162,7 +169,7 @@
     <div class="stat-card"><div class="stat-label">Avg Response</div><div class="stat-val">&lt;5s</div><div class="stat-sub">AI triage generation</div></div>
   </div>
 
-  <!-- Form (full width — no agent pipeline) -->
+  <!-- Form -->
   <div class="card" style="margin-bottom:20px">
     <div class="card-header">
       <div class="card-icon">📋</div>
@@ -170,32 +177,46 @@
     </div>
     <div class="two-col">
       <div class="field"><label>Crop Type</label>
-        <select id="f-crop">
+        <select id="f-crop" onchange="toggleOther(this, 'f-crop-other')">
           <option value="">Select crop...</option>
-          <option>Tomato</option><option>Rice</option><option>Wheat</option><option>Cotton</option>
-          <option>Maize</option><option>Potato</option><option>Chili</option><option>Sugarcane</option>
-          <option>Soybean</option><option>Groundnut</option><option>Mustard</option><option>Onion</option>
+          <option value="Tomato">Tomato</option><option value="Rice">Rice</option><option value="Wheat">Wheat</option>
+          <option value="Cotton">Cotton</option><option value="Maize">Maize</option><option value="Potato">Potato</option>
+          <option value="Chili">Chili</option><option value="Sugarcane">Sugarcane</option><option value="Soybean">Soybean</option>
+          <option value="Groundnut">Groundnut</option><option value="Mustard">Mustard</option><option value="Onion">Onion</option>
+          <option value="other">Others</option>
         </select>
+        <input type="text" id="f-crop-other" class="other-input" placeholder="Please specify crop...">
       </div>
       <div class="field"><label>Growth Stage</label>
-        <select id="f-stage">
+        <select id="f-stage" onchange="toggleOther(this, 'f-stage-other')">
           <option value="">Select stage...</option>
-          <option>Seedling</option><option>Vegetative</option><option>Flowering</option>
-          <option>Fruiting / Grain Fill</option><option>Maturity</option>
+          <option value="Seedling">Seedling</option><option value="Vegetative">Vegetative</option>
+          <option value="Flowering">Flowering</option><option value="Fruiting / Grain Fill">Fruiting / Grain Fill</option>
+          <option value="Maturity">Maturity</option>
+          <option value="other">Others</option>
         </select>
+        <input type="text" id="f-stage-other" class="other-input" placeholder="Please specify stage...">
       </div>
     </div>
     <div class="two-col">
       <div class="field"><label>Region / State</label>
-        <select id="f-region">
+        <select id="f-region" onchange="toggleOther(this, 'f-region-other')">
           <option value="">Select region...</option>
-          <option>Punjab (Alluvial Plains)</option><option>Haryana (Semi-Arid)</option>
-          <option>Uttar Pradesh (Gangetic Plains)</option><option>Maharashtra (Deccan Plateau)</option>
-          <option>Karnataka (Red Lateritic)</option><option>Tamil Nadu (Cauvery Delta)</option>
-          <option>Andhra Pradesh (Coastal Tropical)</option><option>West Bengal (New Alluvial)</option>
-          <option>Gujarat (Sandy Loam)</option><option>Madhya Pradesh (Black Cotton)</option>
-          <option>Rajasthan (Arid Loamy)</option><option>Odisha (Coastal Humid)</option>
+          <option value="Punjab (Alluvial Plains)">Punjab (Alluvial Plains)</option>
+          <option value="Haryana (Semi-Arid)">Haryana (Semi-Arid)</option>
+          <option value="Uttar Pradesh (Gangetic Plains)">Uttar Pradesh (Gangetic Plains)</option>
+          <option value="Maharashtra (Deccan Plateau)">Maharashtra (Deccan Plateau)</option>
+          <option value="Karnataka (Red Lateritic)">Karnataka (Red Lateritic)</option>
+          <option value="Tamil Nadu (Cauvery Delta)">Tamil Nadu (Cauvery Delta)</option>
+          <option value="Andhra Pradesh (Coastal Tropical)">Andhra Pradesh (Coastal Tropical)</option>
+          <option value="West Bengal (New Alluvial)">West Bengal (New Alluvial)</option>
+          <option value="Gujarat (Sandy Loam)">Gujarat (Sandy Loam)</option>
+          <option value="Madhya Pradesh (Black Cotton)">Madhya Pradesh (Black Cotton)</option>
+          <option value="Rajasthan (Arid Loamy)">Rajasthan (Arid Loamy)</option>
+          <option value="Odisha (Coastal Humid)">Odisha (Coastal Humid)</option>
+          <option value="other">Others</option>
         </select>
+        <input type="text" id="f-region-other" class="other-input" placeholder="Please specify region...">
       </div>
       <div class="field"><label>Symptoms / Observations</label>
         <textarea id="f-symptoms" placeholder="Describe what you see: leaf color changes, spots, wilting, unusual smell, pest damage, soil condition..." style="min-height:60px"></textarea>
@@ -269,53 +290,29 @@
         </defs>
 
         <!-- ── INDIA STATE PATHS (accurate geo coordinates) ── -->
-        <!-- Jammu & Kashmir -->
         <path d="M73.9,33.9 L74.7,34.6 L75.3,34.9 L76.2,34.7 L76.9,35.1 L77.8,35.4 L78.5,35.2 L79.1,34.8 L78.8,34.1 L78.2,33.6 L77.5,33.2 L76.8,33.0 L76.0,33.1 L75.2,33.4 L74.5,33.5 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Himachal Pradesh -->
         <path d="M76.5,30.5 L77.2,30.8 L78.0,31.1 L78.8,31.0 L79.3,31.4 L79.0,32.0 L78.5,32.5 L77.8,32.8 L77.0,32.6 L76.3,32.1 L76.1,31.5 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Punjab -->
         <path d="M73.8,29.5 L74.6,29.7 L75.4,30.0 L76.1,30.4 L76.5,30.5 L76.1,31.5 L75.5,31.8 L74.8,31.6 L74.0,31.2 L73.5,30.5 Z" fill="#cce8b8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Haryana -->
         <path d="M75.5,28.0 L76.4,28.2 L77.2,28.5 L77.8,29.0 L77.5,29.7 L76.8,30.1 L76.1,30.4 L75.4,30.0 L74.9,29.4 L74.8,28.7 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Delhi (small box) -->
         <rect x="76.8" y="28.4" width="0.5" height="0.5" fill="#b8d4a0" stroke="#8aba78" stroke-width="0.06"/>
-        <!-- Uttarakhand -->
         <path d="M77.5,29.7 L78.3,29.9 L79.1,30.2 L79.5,30.7 L79.2,31.4 L78.8,31.0 L78.0,31.1 L77.2,30.8 L76.5,30.5 L76.8,30.1 L77.5,29.7 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Uttar Pradesh -->
         <path d="M77.1,25.0 L78.2,25.2 L79.5,25.4 L80.8,25.3 L81.9,25.5 L83.0,25.6 L84.1,25.4 L84.5,26.0 L84.2,26.8 L83.5,27.5 L82.5,27.9 L81.4,27.8 L80.3,27.5 L79.1,27.6 L78.0,28.0 L77.2,28.5 L76.4,28.2 L75.5,28.0 L75.0,27.4 L75.2,26.6 L75.8,26.0 L76.5,25.5 Z" fill="#d8eec8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Rajasthan -->
         <path d="M69.5,24.5 L70.5,24.3 L71.5,24.0 L72.5,23.8 L73.6,23.7 L74.8,24.0 L75.5,24.6 L76.5,25.5 L75.8,26.0 L75.2,26.6 L75.0,27.4 L74.5,28.0 L73.8,28.5 L73.0,28.7 L72.2,28.5 L71.4,28.0 L70.8,27.4 L70.2,26.8 L69.8,26.0 L69.5,25.2 Z" fill="#e0ecd0" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Gujarat -->
         <path d="M68.2,20.0 L69.0,20.2 L70.0,20.0 L71.0,20.2 L72.0,20.5 L72.9,21.0 L73.5,21.8 L73.8,22.6 L73.9,23.4 L73.6,23.7 L72.5,23.8 L71.5,24.0 L70.5,24.3 L69.5,24.5 L69.0,23.8 L68.6,23.0 L68.0,22.2 L67.8,21.4 L68.0,20.7 Z" fill="#dcecc8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Madhya Pradesh -->
         <path d="M75.5,21.5 L76.8,21.3 L78.0,21.2 L79.3,21.0 L80.6,21.0 L81.8,21.3 L82.8,21.8 L83.6,22.5 L83.5,23.4 L83.0,24.1 L82.0,24.6 L81.0,24.9 L79.5,25.4 L78.2,25.2 L77.1,25.0 L76.5,25.5 L75.5,24.6 L74.8,24.0 L74.5,23.2 L74.8,22.4 L75.2,21.9 Z" fill="#d4e8c4" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Bihar -->
         <path d="M83.5,23.4 L84.2,23.3 L85.2,23.5 L86.2,23.8 L87.2,24.0 L87.8,24.6 L87.5,25.4 L86.8,25.8 L85.8,26.0 L84.8,25.9 L84.1,25.4 L83.0,25.6 L83.0,24.9 L83.0,24.1 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Jharkhand -->
         <path d="M83.6,21.5 L84.6,21.4 L85.6,21.5 L86.6,21.8 L87.4,22.3 L87.8,23.0 L87.8,24.6 L87.2,24.0 L86.2,23.8 L85.2,23.5 L84.2,23.3 L83.5,23.4 L83.0,22.5 Z" fill="#c8e4b8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- West Bengal -->
         <path d="M87.8,21.5 L88.5,21.8 L89.2,22.2 L89.5,22.9 L89.4,23.8 L88.9,24.5 L88.3,25.0 L87.8,25.5 L87.5,25.4 L87.8,24.6 L87.8,23.0 L87.4,22.3 L86.6,21.8 L87.2,21.5 Z" fill="url(#state-fill)" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Odisha -->
         <path d="M82.5,18.5 L83.5,18.4 L84.6,18.5 L85.5,18.8 L86.3,19.4 L87.0,20.0 L87.2,20.8 L87.0,21.5 L86.3,22.0 L85.5,22.2 L84.6,21.9 L83.6,21.5 L83.0,20.8 L82.4,20.0 L82.0,19.2 Z" fill="#d0e8c0" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Chhattisgarh -->
         <path d="M80.0,19.0 L81.0,18.8 L82.0,18.7 L82.5,18.5 L82.0,19.2 L82.4,20.0 L83.0,20.8 L83.6,21.5 L83.0,22.5 L82.8,21.8 L81.8,21.3 L80.6,21.0 L79.3,21.0 L78.8,20.4 L79.0,19.6 Z" fill="#cce4ba" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Maharashtra -->
         <path d="M72.8,16.5 L73.8,16.4 L74.8,16.3 L75.8,16.2 L76.8,16.4 L77.8,16.8 L78.8,17.0 L79.8,17.2 L80.5,17.8 L80.8,18.6 L80.0,19.0 L79.0,19.6 L78.8,20.4 L78.0,21.2 L76.8,21.3 L75.5,21.5 L75.2,21.9 L74.8,22.4 L74.5,23.2 L73.8,22.6 L73.5,21.8 L72.9,21.0 L72.5,20.2 L72.0,19.4 L72.0,18.6 L72.2,17.8 L72.5,17.0 Z" fill="#d8ecc4" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Goa (tiny) -->
         <rect x="73.7" y="15.2" width="0.4" height="0.35" fill="#b8d4a0" stroke="#8aba78" stroke-width="0.06"/>
-        <!-- Karnataka -->
         <path d="M74.0,12.5 L75.0,12.4 L76.0,12.3 L77.0,12.5 L77.8,13.0 L78.5,13.8 L78.8,14.6 L78.8,15.4 L78.5,16.0 L77.8,16.8 L76.8,16.4 L75.8,16.2 L74.8,16.3 L73.8,16.4 L73.2,15.7 L73.0,14.9 L73.2,14.1 L73.6,13.3 Z" fill="#d4ecc0" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Andhra Pradesh -->
         <path d="M78.5,13.8 L79.5,13.5 L80.5,13.4 L81.5,13.6 L82.5,14.0 L83.2,14.7 L83.5,15.5 L83.2,16.4 L82.5,17.0 L81.5,17.4 L80.5,17.2 L79.8,17.2 L79.8,17.2 L78.8,17.0 L78.5,16.0 L78.8,15.4 L78.8,14.6 Z" fill="#cce8b8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Telangana -->
         <path d="M78.8,17.0 L79.8,17.2 L80.8,18.6 L80.5,17.8 L79.8,17.2 L79.3,18.0 L78.5,18.2 L77.8,17.8 L77.8,17.0 L78.5,16.0 Z" fill="#c8e4b4" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Tamil Nadu -->
         <path d="M76.0,10.0 L77.0,10.2 L78.0,10.5 L78.8,11.2 L79.2,12.0 L79.2,12.9 L78.5,13.8 L77.8,13.0 L77.0,12.5 L76.0,12.3 L75.0,12.4 L74.5,11.8 L74.4,11.0 L74.8,10.4 L75.3,10.0 Z" fill="#d4e8c0" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Kerala -->
         <path d="M75.5,8.5 L76.2,8.6 L76.8,9.2 L77.0,10.0 L76.5,10.6 L75.9,11.2 L75.5,11.8 L75.0,12.4 L74.5,11.8 L74.4,11.0 L74.5,10.2 L74.8,9.4 L75.0,8.8 Z" fill="#c0e0b0" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Assam + NE states (simplified block) -->
         <path d="M88.5,24.5 L89.5,24.3 L90.2,24.0 L91.0,24.2 L92.0,24.5 L92.8,25.0 L93.2,25.7 L92.8,26.4 L92.0,26.8 L91.0,26.6 L90.0,26.4 L89.2,26.0 L88.6,25.4 Z" fill="#c8e4b8" stroke="#8aba78" stroke-width="0.08"/>
-        <!-- Sikkim (tiny) -->
         <rect x="88.2" y="27.2" width="0.45" height="0.4" fill="#b8d4a0" stroke="#8aba78" stroke-width="0.06"/>
 
         <!-- ── RIVERS ── -->
@@ -434,7 +431,7 @@
 ══════════════════════════════════════════════ -->
 <div class="panel" id="panel-agronomist">
 
-  <div class="hero" style="background:linear-gradient(135deg,#0a1e30 0%,#0d2a1e 100%);margin-bottom:20px">
+  <div class="hero">
     <div class="hero-pattern" style="opacity:.05">🔬</div>
     <div class="hero-eyebrow"><span class="pulse"></span> Precision Pathological Hub — ICAR Protocol</div>
     <h1>Agronomist<br>Deep Diagnosis</h1>
@@ -504,20 +501,34 @@
         </div>
         <div class="two-col">
           <div class="field"><label>Crop</label>
-            <select id="d-crop"><option value="">Select...</option>
-              <option>Tomato</option><option>Rice</option><option>Wheat</option>
-              <option>Cotton</option><option>Maize</option><option>Potato</option><option>Chili</option>
+            <select id="d-crop" onchange="toggleOther(this, 'd-crop-other')">
+              <option value="">Select...</option>
+              <option value="Tomato">Tomato</option><option value="Rice">Rice</option><option value="Wheat">Wheat</option>
+              <option value="Cotton">Cotton</option><option value="Maize">Maize</option><option value="Potato">Potato</option>
+              <option value="Chili">Chili</option>
+              <option value="other">Others</option>
             </select>
+            <input type="text" id="d-crop-other" class="other-input" placeholder="Please specify crop...">
           </div>
           <div class="field"><label>Stage</label>
-            <select id="d-stage"><option>Vegetative</option><option>Flowering</option><option>Fruiting</option><option>Maturity</option></select>
+            <select id="d-stage" onchange="toggleOther(this, 'd-stage-other')">
+              <option value="Vegetative">Vegetative</option><option value="Flowering">Flowering</option>
+              <option value="Fruiting">Fruiting</option><option value="Maturity">Maturity</option>
+              <option value="other">Others</option>
+            </select>
+            <input type="text" id="d-stage-other" class="other-input" placeholder="Please specify stage...">
           </div>
         </div>
         <div class="two-col">
           <div class="field"><label>Region</label>
-            <select id="d-region"><option>Punjab</option><option>Haryana</option><option>UP</option>
-              <option>Maharashtra</option><option>Karnataka</option><option>Tamil Nadu</option>
-              <option>Gujarat</option><option>West Bengal</option></select>
+            <select id="d-region" onchange="toggleOther(this, 'd-region-other')">
+              <option value="Punjab">Punjab</option><option value="Haryana">Haryana</option><option value="UP">UP</option>
+              <option value="Maharashtra">Maharashtra</option><option value="Karnataka">Karnataka</option>
+              <option value="Tamil Nadu">Tamil Nadu</option><option value="Gujarat">Gujarat</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="other">Others</option>
+            </select>
+            <input type="text" id="d-region-other" class="other-input" placeholder="Please specify region...">
           </div>
           <div class="field"><label>Field Area (acres)</label>
             <input type="number" id="d-area" value="2.5" min="0.1" step="0.5">
@@ -596,7 +607,7 @@
             <div>
               <div id="heatmap-grid" style="margin-bottom:8px"></div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;font-size:10px;color:var(--dim)">
-                <span style="width:10px;height:10px;background:#0d1a0a;border-radius:2px;display:inline-block"></span>Minimal
+                <span style="width:10px;height:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:2px;display:inline-block"></span>Minimal
                 <span style="width:10px;height:10px;background:#3d7a1e;border-radius:2px;display:inline-block;margin-left:4px"></span>Moderate
                 <span style="width:10px;height:10px;background:#d9a84e;border-radius:2px;display:inline-block;margin-left:4px"></span>High
                 <span style="width:10px;height:10px;background:#e05030;border-radius:2px;display:inline-block;margin-left:4px"></span>Critical
@@ -626,7 +637,7 @@
 ══════════════════════════════════════════════ -->
 <div class="panel" id="panel-advisor">
 
-  <div class="hero" style="background:linear-gradient(135deg,#1a0d30 0%,#0f2a20 100%);margin-bottom:20px">
+  <div class="hero">
     <div class="hero-pattern" style="opacity:.05">🤖</div>
     <div class="hero-eyebrow"><span class="pulse"></span> KrishiAI Conversational Engine — Multi-Source Knowledge</div>
     <h1>Your Agricultural<br>AI Expert</h1>
@@ -709,6 +720,17 @@ let lastTriageData=null, lastDiagData=null, activeCaseIdx=0;
 let recoveryChart=null, diagChart=null, triageStartTime=null;
 let chatHistory=[], deferredInstall=null;
 
+// Toggle visibility of the "Others" input field
+function toggleOther(selectElem, inputId) {
+  const input = document.getElementById(inputId);
+  if (selectElem.value === 'other') {
+    input.style.display = 'block';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+  }
+}
+
 // ══ BACKEND API HELPER ═════════════════════════
 async function apiPost(endpoint, body) {
   const res = await fetch('/api/' + endpoint, {
@@ -723,7 +745,6 @@ async function apiPost(endpoint, body) {
   return res.json();
 }
 
-// Legacy shim — kept for compatibility with any remaining callers
 async function callClaude(system, userMsg, imgB64=null, imgMime='image/jpeg'){
   const data = await apiPost('chat', {
     messages: [{ role: 'user', content: userMsg }],
@@ -735,11 +756,19 @@ async function callClaude(system, userMsg, imgB64=null, imgMime='image/jpeg'){
   return data.response || '';
 }
 
-// ══ AUTH GATE (MANDATORY) ══════════════════════
+// ══ ROBUST AUTH & STORAGE (MANDATORY GATE) ══════
 const USERS_KEY='kk_users_v2', SESSION_KEY='kk_session_v2';
-function loadUsers(){ try{return JSON.parse(localStorage.getItem(USERS_KEY)||'{}')}catch{return{}} }
-function saveUsers(u){ localStorage.setItem(USERS_KEY,JSON.stringify(u)) }
-function loadSession(){ try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null} }
+
+let memUsers = {};
+let memSession = null;
+let memVisits = [];
+
+function loadUsers(){ try{return JSON.parse(localStorage.getItem(USERS_KEY)) || {};}catch(e){return memUsers;} }
+function saveUsers(u){ memUsers = u; try{localStorage.setItem(USERS_KEY,JSON.stringify(u));}catch(e){} }
+function loadSession(){ try{return JSON.parse(localStorage.getItem(SESSION_KEY)) || null;}catch(e){return memSession;} }
+function saveSession(u){ memSession = u; try{localStorage.setItem(SESSION_KEY,JSON.stringify(u));}catch(e){} }
+function loadVisits(){ try{return JSON.parse(localStorage.getItem('kk_visits')) || [];}catch(e){return memVisits;} }
+function saveVisits(v){ memVisits = v; try{localStorage.setItem('kk_visits',JSON.stringify(v));}catch(e){} }
 
 function switchGateTab(t){
   document.getElementById('gate-reg-form').style.display=t==='register'?'block':'none';
@@ -756,6 +785,20 @@ function setRole(r){
   ['farmer','agronomist','researcher'].forEach(x=>document.getElementById('role-'+x).classList.toggle('active',x===r));
 }
 
+function demoBypass() {
+    const demoUser = {
+        id: 'u_demo_' + Date.now(),
+        name: 'Guest Agronomist',
+        email: 'demo@krishikonnect.in',
+        role: 'agronomist',
+        password: 'demo', 
+        createdAt: new Date().toISOString(),
+        visitCount: 1,
+        lastLogin: new Date().toISOString()
+    };
+    loginUser(demoUser);
+}
+
 function doRegister(){
   const name=document.getElementById('rg-name').value.trim();
   const email=document.getElementById('rg-email').value.trim();
@@ -765,8 +808,10 @@ function doRegister(){
   if(!email.includes('@')){showGateErr('Please enter a valid email address.');return;}
   const users=loadUsers();
   if(users[email]){showGateErr('This email is already registered. Please sign in.');return;}
-  const user={id:'u_'+Date.now(),name,email,role:selectedRole,password:btoa(pass),
+  
+  const user={id:'u_'+Date.now(),name,email,role:selectedRole,password:pass,
     createdAt:new Date().toISOString(),visitCount:1,lastLogin:new Date().toISOString()};
+  
   users[email]=user; saveUsers(users);
   loginUser(user);
   trackVisit('register');
@@ -775,10 +820,14 @@ function doRegister(){
 function doLogin(){
   const email=document.getElementById('li-email').value.trim();
   const pass=document.getElementById('li-pass').value;
+  
+  if(!email && !pass){ demoBypass(); return; } 
   if(!email||!pass){showGateErr('Please fill both fields.');return;}
   const users=loadUsers();
   const user=users[email];
-  if(!user||user.password!==btoa(pass)){showGateErr('Incorrect email or password.');return;}
+  
+  if(!user||user.password!==pass){showGateErr('Incorrect email or password.');return;}
+  
   user.visitCount=(user.visitCount||0)+1;
   user.lastLogin=new Date().toISOString();
   users[email]=user; saveUsers(users);
@@ -788,24 +837,27 @@ function doLogin(){
 
 function loginUser(user){
   currentUser=user;
-  localStorage.setItem(SESSION_KEY,JSON.stringify(user));
-  // Hide gate
+  saveSession(user);
+  
   const gate=document.getElementById('auth-gate');
   gate.style.animation='fade-out .3s ease forwards';
   setTimeout(()=>gate.style.display='none',300);
-  // Update topbar
-  const init=user.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  
+  const safeName = user.name || 'User';
+  let init = 'U';
+  try { init = safeName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(); } catch(e) {}
+  
   document.getElementById('top-avatar').textContent=init;
-  document.getElementById('top-name').textContent=user.name.split(' ')[0];
-  document.getElementById('ud-name').textContent=user.name;
+  document.getElementById('top-name').textContent=safeName.split(' ')[0];
+  document.getElementById('ud-name').textContent=safeName;
   document.getElementById('ud-email').textContent=user.email;
   document.getElementById('ud-role-badge').textContent=user.role;
-  showToast('Welcome, '+user.name.split(' ')[0]+'!');
+  showToast('Welcome, '+safeName.split(' ')[0]+'!');
 }
 
 function doLogout(){
   currentUser=null;
-  localStorage.removeItem(SESSION_KEY);
+  saveSession(null);
   document.getElementById('user-dropdown').classList.remove('open');
   document.getElementById('auth-gate').style.display='flex';
   document.getElementById('auth-gate').style.animation='gate-in .3s ease';
@@ -821,7 +873,7 @@ document.addEventListener('click',e=>{
 
 function showStats(){
   document.getElementById('user-dropdown').classList.remove('open');
-  const visits=JSON.parse(localStorage.getItem('kk_visits')||'[]');
+  const visits=loadVisits();
   const mine=visits.filter(v=>v.user===currentUser?.id);
   showToast(`Your activity: ${mine.length} actions | Joined: ${new Date(currentUser.createdAt).toLocaleDateString()}`);
 }
@@ -833,9 +885,10 @@ function downloadApp(){
 }
 
 function trackVisit(action){
-  const v=JSON.parse(localStorage.getItem('kk_visits')||'[]');
+  const v=loadVisits();
   v.push({action,time:new Date().toISOString(),user:currentUser?.id||'guest'});
-  localStorage.setItem('kk_visits',JSON.stringify(v.slice(-500)));
+  if(v.length > 500) v.shift();
+  saveVisits(v);
 }
 
 // ══ TAB NAVIGATION ═════════════════════════════
@@ -869,10 +922,6 @@ function generateHeatWeights(p,total=64){
   const s=r2.reduce((a,b)=>a+b,0);
   return r2.map(v=>+(v/s).toFixed(4));
 }
-
-// Agent pipeline removed from farmer tab — stubs kept for JS safety
-function renderAPSteps(){}
-function resetAPSteps(){}
 
 // ══ CHARTS ══════════════════════════════════════
 function initFarmerChart(){
@@ -912,7 +961,6 @@ const MANDI_DATA=[
   {crop:'Onion',mandi:'Lasalgaon, MH',state:'Maharashtra',price:1560,min:1200,max:1900,change:-3.2,trend:'down',lat:20.12,lng:74.22,
    nearby:[{city:'Nashik',price:1600,mandi:'Nashik APMC'},{city:'Pune',price:1650,mandi:'Pune Market'},{city:'Ahmednagar',price:1540,mandi:'Ahmednagar Mandi'}]},
 ];
-// SVG uses real lat/lng coords directly (viewBox="68 6 30 30" — lng from 68, lat inverted from 36 top)
 function latLngToSVG(lat,lng){ return{x:lng, y:36-(lat-6)}; }
 function renderMandi(){
   document.getElementById('mandi-table').innerHTML=`<thead><tr><th>Crop</th><th>Market</th><th>Modal Price</th><th>Range</th><th>Change</th></tr></thead><tbody>`+
@@ -924,10 +972,9 @@ function renderMandi(){
       <td class="${r.change>=0?'price-up':'price-dn'}">${r.change>=0?'▲':'▼'} ${Math.abs(r.change)}%</td>
     </tr>`).join('')+'</tbody>';
   const pinsEl=document.getElementById('map-pins');
-  // SVG viewBox is real coords: x=lng, y=36-(lat-6) because lat increases upward
   pinsEl.innerHTML=MANDI_DATA.map((r,i)=>{
     const cx=r.lng;
-    const cy=36-(r.lat-6); // flip lat to SVG y
+    const cy=36-(r.lat-6); 
     const col=r.trend==='up'?'#166534':'#b91c1c';
     const priceLabel=r.price>=1000?(r.price/1000).toFixed(1)+'k':r.price;
     return`<g class="map-pin-group" onclick="showNearby(${i})" style="cursor:pointer">
@@ -957,10 +1004,17 @@ function showNearby(i){
 
 // ══ FARMER TRIAGE ═══════════════════════════════
 async function runTriage(){
-  const crop=document.getElementById('f-crop').value;
-  const stage=document.getElementById('f-stage').value;
-  const region=document.getElementById('f-region').value;
+  let crop=document.getElementById('f-crop').value;
+  if(crop === 'other') crop = document.getElementById('f-crop-other').value.trim();
+  
+  let stage=document.getElementById('f-stage').value;
+  if(stage === 'other') stage = document.getElementById('f-stage-other').value.trim();
+  
+  let region=document.getElementById('f-region').value;
+  if(region === 'other') region = document.getElementById('f-region-other').value.trim();
+  
   const symptoms=document.getElementById('f-symptoms').value.trim();
+  
   if(!crop||!stage||!region||!symptoms){showToast('Please fill all fields first.');return;}
 
   const btn=document.getElementById('triage-btn');
@@ -978,11 +1032,10 @@ async function runTriage(){
     aiText=result.ai_triage;
     d=result.decay_rate; k=result.recovery_k;
     code=result.diagnostic_code; sev=result.severity;
-    pathName=result.diagnostic_code; // will be overridden by display
+    pathName=result.diagnostic_code; 
     curves={decay:result.decay_curve,recovery:result.recovery_curve};
   }catch(e){
     console.error('Triage API error:',e);
-    // Fallback local logic
     const sym=symptoms.toLowerCase();
     if(sym.includes('blight')||sym.includes('spot')||sym.includes('brown')||sym.includes('ring')){d=0.12;k=0.28;code='PATH-ALT-BLIGHT';sev='HIGH';pathName='Early Blight (Alternaria solani)';}
     else if(sym.includes('mildew')||sym.includes('powder')||sym.includes('white')){d=0.08;k=0.32;code='PATH-MILDEW-COAT';sev='MEDIUM';pathName='Powdery Mildew';}
@@ -992,7 +1045,6 @@ async function runTriage(){
     aiText=`WHAT WE FOUND: Your ${crop} crop shows signs of ${pathName}. This is a ${sev.toLowerCase()} risk condition that needs your attention right away.\n\nCURRENT WEATHER AND SEASON: ${region} conditions are currently favouring disease spread. Act promptly.\n\nWHAT YOU MUST DO TODAY: Remove infected leaves and destroy them. Avoid evening watering. Improve air circulation between plants.\n\nSPRAY RECOMMENDATION: Mancozeb 75 WP at 2g per liter of water. Spray all leaf surfaces every 7 days for 3 cycles. Wear gloves and mask.\n\nNATURAL OPTION: Neem oil 10ml per liter with a drop of soap, spray every 5 days as a safe alternative.\n\n3 MONTH OUTLOOK: Month 1 — Apply treatment and monitor every 2 days. Month 2 — Continue monitoring, switch to neem during flowering. Month 3 — Crop should recover if treated promptly.`;
   }
 
-  // Render as plain report sections
   const sections=aiText.split(/\n(?=[A-Z][A-Z\s]+:)/g).filter(s=>s.trim());
   let html='';
   sections.forEach(sec=>{
@@ -1020,7 +1072,6 @@ async function runTriage(){
     </div>`;
 
   updateFarmerChart(d,k);
-  // Always show download actions once a report is ready
   const reportActions = document.getElementById('report-actions');
   reportActions.style.display='flex';
   reportActions.style.flexWrap='wrap';
@@ -1030,7 +1081,6 @@ async function runTriage(){
   trackVisit('triage');
 }
 
-// ══ DOWNLOAD REPORT AS TEXT FILE ════════════════
 function downloadReportFile(){
   if(!lastTriageData){showToast('Generate a report first.');return;}
   const{crop,stage,region,symptoms,pathName,sev,aiText}=lastTriageData;
@@ -1070,7 +1120,6 @@ KrishiKonnect AI Platform
   showToast('Report downloaded as text file.');
 }
 
-// ══ PDF GENERATION ══════════════════════════════
 function generatePDF(type){
   const now=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
   let html='';
@@ -1134,11 +1183,37 @@ function selectCase(i){
   activeCaseIdx=i;
   CASES.forEach((_,j)=>document.getElementById(`case-item-${j}`)?.classList.toggle('active',j===i));
   const c=CASES[i];
-  document.getElementById('d-crop').value=c.crop;
-  document.getElementById('d-stage').value=c.stage;
-  document.getElementById('d-region').value=c.region;
+  
+  // Try to set crop
+  let cropEl = document.getElementById('d-crop');
+  let cropOther = document.getElementById('d-crop-other');
+  if(Array.from(cropEl.options).some(o => o.value === c.crop)) {
+      cropEl.value = c.crop; cropOther.style.display = 'none';
+  } else {
+      cropEl.value = 'other'; cropOther.value = c.crop; cropOther.style.display = 'block';
+  }
+
+  // Try to set stage
+  let stageEl = document.getElementById('d-stage');
+  let stageOther = document.getElementById('d-stage-other');
+  if(Array.from(stageEl.options).some(o => o.value === c.stage)) {
+      stageEl.value = c.stage; stageOther.style.display = 'none';
+  } else {
+      stageEl.value = 'other'; stageOther.value = c.stage; stageOther.style.display = 'block';
+  }
+  
+  // Try to set region
+  let regionEl = document.getElementById('d-region');
+  let regionOther = document.getElementById('d-region-other');
+  if(Array.from(regionEl.options).some(o => o.value === c.region)) {
+      regionEl.value = c.region; regionOther.style.display = 'none';
+  } else {
+      regionEl.value = 'other'; regionOther.value = c.region; regionOther.style.display = 'block';
+  }
+
   document.getElementById('d-area').value=c.area;
   document.getElementById('d-symptoms').value=c.symptoms;
+  
   if(c.thumb){document.getElementById('upload-preview').src=c.thumb;document.getElementById('upload-preview-wrap').style.display='block';document.getElementById('upload-prompt').style.display='none';}
   document.getElementById('diag-output').style.display='none';
   document.getElementById('pipeline-steps').style.display='none';
@@ -1148,13 +1223,13 @@ function addNewCase(){
   CASES.push({id:`C-00${CASES.length+1}`,farmer:'New Farmer',crop:'',region:'',stage:'Vegetative',area:1.0,symptoms:'',severity:'medium',status:'Pending',thumb:null,submitted:'now'});
   activeCaseIdx=CASES.length-1;
   renderCaseQueue(); selectCase(activeCaseIdx);
-  document.getElementById('d-crop').value='';
+  document.getElementById('d-crop').value=''; document.getElementById('d-crop-other').style.display='none';
+  document.getElementById('d-region').value=''; document.getElementById('d-region-other').style.display='none';
   document.getElementById('d-symptoms').value='';
   document.getElementById('upload-preview-wrap').style.display='none';
   document.getElementById('upload-prompt').style.display='block';
 }
 
-// ── Image Upload ──
 function handleDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag-over');}
 function handleDragLeave(){document.getElementById('drop-zone').classList.remove('drag-over');}
 function handleDrop(e){e.preventDefault();document.getElementById('drop-zone').classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processImageFile(f);}
@@ -1220,11 +1295,18 @@ async function runPipeStep(i,out,ms){
 }
 
 async function runDeepDiagnosis(){
-  const crop=document.getElementById('d-crop').value;
-  const stage=document.getElementById('d-stage').value;
-  const region=document.getElementById('d-region').value;
+  let crop=document.getElementById('d-crop').value;
+  if(crop === 'other') crop = document.getElementById('d-crop-other').value.trim();
+  
+  let stage=document.getElementById('d-stage').value;
+  if(stage === 'other') stage = document.getElementById('d-stage-other').value.trim();
+  
+  let region=document.getElementById('d-region').value;
+  if(region === 'other') region = document.getElementById('d-region-other').value.trim();
+  
   const area=document.getElementById('d-area').value;
   const symptoms=document.getElementById('d-symptoms').value.trim();
+  
   if(!crop||!symptoms){showToast('Select crop and enter symptoms.');return;}
 
   const btn=document.getElementById('diag-btn');
@@ -1233,7 +1315,6 @@ async function runDeepDiagnosis(){
   document.getElementById('diag-output').style.display='none';
   resetPipeline();
 
-  // Start API call immediately (in parallel with animations)
   const imgEl=document.getElementById('upload-preview');
   let imgB64=null,imgMime='image/jpeg';
   if(imgEl.src&&imgEl.src.startsWith('data:')){
@@ -1248,15 +1329,12 @@ async function runDeepDiagnosis(){
     image_base64:imgB64,image_mime:imgMime
   }).catch(e=>{ console.error('Diagnose API error:',e); return null; });
 
-  // Animate pipeline steps while API runs (sequential, meaningful delays)
   const stepDelays=[900,800,750,700,600,850];
   for(let i=0;i<PIPE_CFG.length;i++){
     await runPipeStep(i,'Analyzing...',stepDelays[i]);
   }
 
-  // Now wait for API result
   const result = await apiPromise;
-
   let d=0.08,k=0.25,chemRx,bioRx,pathogen,severity,ipmNotes=[],aiAnalysis,farmerAdv,agronNotes,curves;
 
   if(result){
@@ -1269,7 +1347,6 @@ async function runDeepDiagnosis(){
     agronNotes=result.agronomist_notes;
     curves={decay:result.decay_vector,recovery:result.recovery_vector};
 
-    // Update pipe steps with real agent traces
     if(result.agent_traces){
       result.agent_traces.forEach((trace,i)=>{
         const outEl=document.getElementById('po-'+i);
@@ -1353,23 +1430,7 @@ function markCaseDone(){
 }
 
 // ══ CHAT — ENRICHED ═════════════════════════════
-const CHAT_SYSTEM=`You are KrishiAI, a highly knowledgeable Indian agricultural expert chatbot powered by multiple open knowledge sources.
-
-Your knowledge includes:
-- ICAR disease profiles for all major Indian crops (Tomato, Rice, Wheat, Cotton, Maize, Potato, Sugarcane, Groundnut, Mustard, Soybean, Chili, Onion)
-- Agropedia open agricultural encyclopedia — pest management, soil science, crop agronomy
-- FAO AGRIS research database — global agricultural science
-- Government scheme details — PM-KISAN (Rs 6000/year), PMFBY crop insurance (Kharif 2%, Rabi 1.5%), Kisan Credit Card (4% interest), MSP prices for all notified crops
-- APMC mandi prices across 28 Indian states
-- IMD weather data and seasonal crop calendars
-- Organic farming, SRI rice method, IPM practices
-- Soil health cards, micronutrient deficiency identification
-- Post-harvest storage, cold chain, marketing
-
-Respond in the same language the user writes in — Hindi or English. Be warm, practical, specific. Reference sources when helpful. About 140 words per response. Use plain text, no asterisks or bullets.`;
-
 function setLLM(llm){
-  // Only Claude is available — Gemini and GPT-4o require backend API keys
   if(llm !== 'claude'){
     showToast('Gemini and GPT-4o require backend API keys. Claude is active and working.');
     return;
@@ -1478,11 +1539,9 @@ function showToast(msg){
 
 // ══ INIT ═════════════════════════════════════════
 window.addEventListener('load',()=>{
-  // Restore session — still shows gate if not logged in
   const sess=loadSession();
   if(sess){ loginUser(sess); }
-  // Always start with gate visible until auth completes
-
+  
   initFarmerChart();
   renderMandi();
   renderAPSteps();
