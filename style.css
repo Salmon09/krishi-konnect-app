@@ -1,23 +1,23 @@
 /* ═══════════════════════════════════════════════════════════
-   KrishiKonnect — style.css (100% Light Theme)
+   KrishiKonnect — style.css (100% Pure Light Theme)
    ═══════════════════════════════════════════════════════════ */
 
 /* ── CSS Variables — Pure Light Agri Theme ──────────────── */
 :root {
-  --bg:       #f3f8ee;
-  --surface:  #e8f2e0;
+  --bg:       #f4f7f2;
+  --surface:  #e9f0e4;
   --card:     #ffffff;
-  --border:   #c2d9ae;
-  --border2:  #d8ecca;
-  --mist:     #f0f7e8;
-  --ink:      #1c3010;
-  --dim:      #4a6e30;
-  --leaf:     #3a7d0e;
-  --sprout:   #52a81a;
-  --forest:   #2a5c0a;
-  --ember:    #c0392b;
-  --clay:     #a06c0a;
-  --sky:      #1a6e8a;
+  --border:   #cddbc4;
+  --border2:  #e2ebd9;
+  --mist:     #f2f6ee;
+  --ink:      #1a2e10;
+  --dim:      #5c7a4d;
+  --leaf:     #4d9426;
+  --sprout:   #6eb834;
+  --forest:   #2b5c12;
+  --ember:    #d94325;
+  --clay:     #b88628;
+  --sky:      #2b8aab;
   --mono:     'JetBrains Mono', monospace;
   --sans:     'Space Grotesk', sans-serif;
   --r:        10px;
@@ -57,7 +57,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at 35% 40%, #e2f0d5 0%, #cbe8b3 60%, #b2db8c 100%);
+  background: radial-gradient(ellipse at 35% 40%, #eef5e6 0%, #d9ebc9 60%, #bcdf9d 100%);
   padding: 20px;
   animation: gate-in .35s ease;
 }
@@ -320,11 +320,11 @@ body {
 .panel.active { display: block; }
 
 /* ═══════════════════════════════════════════════════════════
-   HERO (Light Theme Adjusted)
+   HERO (Pure Light Theme)
    ═══════════════════════════════════════════════════════════ */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, #e4f0d8 0%, #cce4b8 100%);
+  background: linear-gradient(135deg, #eaf2e3 0%, #d4e8c4 100%);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 32px 36px;
