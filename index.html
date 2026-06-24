@@ -24,24 +24,10 @@
 <!-- Print-only styles inline (critical) -->
 <style>
 @media print {
-  @page { margin: 12mm 14mm; size: A4 portrait; }
-  html, body { height: auto !important; overflow: visible !important; background: white !important; }
   body * { visibility: hidden !important; }
   #pdf-report, #pdf-report * { visibility: visible !important; }
-  #pdf-report {
-    display: block !important;
-    position: static !important;
-    width: 100% !important;
-    height: auto !important;
-    overflow: visible !important;
-    background: white !important;
-    z-index: 99999 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  .pdf-wrap { width: 100% !important; overflow: visible !important; }
-  .pdf-header, .pdf-meta-row, .pdf-two { page-break-inside: avoid; }
-  .pdf-table { page-break-inside: avoid; }
+  #pdf-report { display: block !important; position: fixed !important; inset: 0 !important; background: white !important; z-index: 99999 !important; padding: 36px 48px !important; overflow: auto !important; }
+  @page { margin: 0; size: A4 portrait; }
 }
 /* Global overflow guard — prevents any child from widening the viewport */
 .panel, .card, .upload-zone, .scan-wrapper, .upload-preview, #drop-zone {
@@ -1134,80 +1120,19 @@ function generatePDF(type){
     <div class="pdf-disclaimer">AI-generated advisory. Consult your local KVK or ICAR agronomist for critical decisions. Pesticide use must comply with Insecticides Act 1968.</div>`;
   } else if(type==='deep'&&lastDiagData){
     const{crop,stage,region,area,pathogen,confidence,severity,chemRx,bioRx,aiAnalysis,farmerAdv,agronNotes,ipmNotes,curves}=lastDiagData;
-    // Compact table — only days 0,2,4,7,10,14 (6 rows fits on one page)
-    const keyDays=[0,2,4,7,10,14];
     let rows='';
-    keyDays.forEach(t=>{
-      const dv=curves.decay[t]||0, rv=curves.recovery[t]||0;
-      const g=((rv-dv)*100).toFixed(1);
-      rows+=`<tr><td>Day ${t}</td><td>${(dv*100).toFixed(1)}%</td><td>${(rv*100).toFixed(1)}%</td><td style="color:#2b5c12;font-weight:700">+${g}%</td></tr>`;
-    });
-    // Trim long text to keep everything on one page
-    const trim=(s,n)=>s&&s.length>n?s.substring(0,n).trimEnd()+'…':s||'—';
-    const ipmStr=(ipmNotes||[]).slice(0,3).map((n,i)=>`${i+1}. ${n}`).join(' · ');
-    html=`<div class="pdf-wrap">
-    <div class="pdf-header">
-      <div>
-        <div class="pdf-logo">Krishi<span>Konnect</span></div>
-        <div style="font-size:10px;color:#555;margin-top:2px;font-family:sans-serif">Agronomist Deep Diagnosis Report</div>
-      </div>
-      <div class="pdf-meta-small">
-        Case ID: DX-${Date.now().toString().slice(-6)}<br>
-        Date: ${now}<br>
-        Agronomist: ${currentUser?.name||'Field Agronomist'}
-      </div>
-    </div>
-
-    <div class="pdf-title" style="font-size:18px;margin-bottom:2px">Deep Pathological Diagnosis</div>
-    <div class="pdf-sub" style="font-size:12px;margin-bottom:10px">${crop} · ${stage} · ${region} · ${area} acres</div>
-
-    <div class="pdf-meta-row" style="padding:8px 12px;margin-bottom:10px;gap:14px">
-      <div class="pdf-mi"><strong>Pathogen</strong><span style="font-size:12px">${pathogen}</span></div>
-      <div class="pdf-mi"><strong>Confidence</strong><span style="font-size:12px">${(confidence*100).toFixed(0)}%</span></div>
-      <div class="pdf-mi"><strong>Severity</strong><span style="font-size:12px">${severity}</span></div>
-      <div class="pdf-mi"><strong>Field Area</strong><span style="font-size:12px">${area} ac</span></div>
-    </div>
-
-    <div class="pdf-two" style="gap:8px;margin-bottom:8px">
-      <div class="pdf-box" style="padding:8px 10px">
-        <div class="pdf-box-title">⚗ Chemical Prescription</div>
-        <p style="font-size:11px;line-height:1.5;color:#333">${trim(chemRx,220)}</p>
-      </div>
-      <div class="pdf-box" style="padding:8px 10px">
-        <div class="pdf-box-title">🌿 Biological Prescription</div>
-        <p style="font-size:11px;line-height:1.5;color:#333">${trim(bioRx,220)}</p>
-      </div>
-    </div>
-
-    <div class="pdf-sec-title" style="margin-top:8px">Pathological Assessment</div>
-    <div class="pdf-body" style="font-size:11px;line-height:1.5">${trim(aiAnalysis,420)}</div>
-
-    <div class="pdf-sec-title" style="margin-top:8px">Farmer Advisory</div>
-    <div class="pdf-body" style="font-size:11px;line-height:1.5">${trim(farmerAdv||'Follow prescriptions as directed. Contact KVK if no improvement in 7 days.',300)}</div>
-
-    <div class="pdf-sec-title" style="margin-top:8px">IPM Notes</div>
-    <div class="pdf-body" style="font-size:11px;line-height:1.5">${ipmStr||'Follow standard ICAR IPM protocol.'}</div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;align-items:start">
-      <div>
-        <div class="pdf-sec-title" style="margin-top:0">Recovery Projection (key days)</div>
-        <table class="pdf-table" style="font-size:10px">
-          <thead><tr><th>Day</th><th>Untreated</th><th>Treated</th><th>Gain</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-      <div>
-        <div class="pdf-sec-title" style="margin-top:0">Technical Notes</div>
-        <div class="pdf-body" style="font-size:10px;line-height:1.5;color:#444">${trim(agronNotes||'See ICAR disease management protocol.',280)}</div>
-      </div>
-    </div>
-
-    <div class="pdf-footer" style="margin-top:10px;padding-top:8px">
-      <span>KrishiKonnect AI Platform · kishi-konnect-app.vercel.app</span>
-      <span>${now}</span>
-    </div>
-    <div class="pdf-disclaimer">AI-generated for informational purposes. Must be reviewed by a certified agronomist before field implementation. Pesticide use must comply with Insecticides Act 1968.</div>
-    </div>`;
+    for(let t=0;t<=14;t+=2){const g=((curves.recovery[t]-curves.decay[t])*100).toFixed(1);rows+=`<tr><td>Day ${t}</td><td>${(curves.decay[t]*100).toFixed(1)}%</td><td>${(curves.recovery[t]*100).toFixed(1)}%</td><td>+${g}%</td></tr>`;}
+    html=`<div class="pdf-header"><div><div class="pdf-logo">Krishi<span>Konnect</span></div><div style="font-size:11px;color:#555;margin-top:2px">Agronomist Deep Diagnosis Report</div></div><div class="pdf-meta-small">Case ID: DX-${Date.now().toString().slice(-6)}<br>Date: ${now}<br>Agronomist: ${currentUser?.name||'Field Agronomist'}</div></div>
+    <div class="pdf-title">Deep Pathological Diagnosis</div><div class="pdf-sub">${crop} — ${stage} — ${region} — ${area} acres</div>
+    <div class="pdf-meta-row"><div class="pdf-mi"><strong>Pathogen</strong><span>${pathogen}</span></div><div class="pdf-mi"><strong>Confidence</strong><span>${(confidence*100).toFixed(1)}%</span></div><div class="pdf-mi"><strong>Severity</strong><span>${severity}</span></div><div class="pdf-mi"><strong>Area</strong><span>${area} ac</span></div></div>
+    <div class="pdf-sec-title">Prescriptions</div><div class="pdf-two"><div class="pdf-box"><div class="pdf-box-title">Chemical</div><p>${chemRx}</p></div><div class="pdf-box"><div class="pdf-box-title">Biological</div><p>${bioRx}</p></div></div>
+    <div class="pdf-sec-title">AI Pathological Assessment</div><div class="pdf-body">${aiAnalysis}</div>
+    <div class="pdf-sec-title">Farmer Advisory (Plain Language)</div><div class="pdf-body">${farmerAdv||'Follow prescriptions as directed. Contact KVK if no improvement in 7 days.'}</div>
+    <div class="pdf-sec-title">Agronomist Technical Notes</div><div class="pdf-body">${agronNotes||'See ICAR disease management protocol.'}</div>
+    <div class="pdf-sec-title">IPM Notes</div><div class="pdf-body">${(ipmNotes||[]).join('\n')}</div>
+    <div class="pdf-sec-title">14-Day Recovery Projection</div><table class="pdf-table"><thead><tr><th>Day</th><th>Unchecked</th><th>With Treatment</th><th>Gain</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="pdf-footer"><span>KrishiKonnect AI Platform</span><span>${now}</span></div>
+    <div class="pdf-disclaimer">AI-generated for informational purposes. Must be reviewed by a certified agronomist before field implementation.</div>`;
   }
   document.getElementById('pdf-content').innerHTML=html;
   document.getElementById('pdf-report').style.display='block';
