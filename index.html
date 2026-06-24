@@ -29,6 +29,13 @@
   #pdf-report { display: block !important; position: fixed !important; inset: 0 !important; background: white !important; z-index: 99999 !important; padding: 36px 48px !important; overflow: auto !important; }
   @page { margin: 0; size: A4 portrait; }
 }
+/* Global overflow guard — prevents any child from widening the viewport */
+.panel, .card, .upload-zone, .scan-wrapper, .upload-preview, #drop-zone {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.upload-preview { width: 100%; height: auto; display: block; object-fit: contain; }
+.scan-wrapper { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -215,7 +222,7 @@
         <div class="card-title">Your Farm Report</div>
         <div class="card-desc">Written in simple language — disease, weather, what to do, and your 3-month crop outlook</div>
       </div>
-      <div id="triage-pdf-btn" style="margin-left:auto;display:none;gap:8px;display:none;align-items:center" id="report-actions">
+      <div id="report-actions" style="margin-left:auto;display:none;gap:8px;align-items:center">
         <button class="btn btn-primary btn-sm" onclick="downloadReportFile()">⬇ Download Report</button>
         <button class="btn btn-ghost btn-sm" onclick="generatePDF('triage')">Print / PDF</button>
       </div>
@@ -467,7 +474,7 @@
           <div><div class="card-title">Step 1 — Upload Field Image</div><div class="card-desc">Drag & drop, click to browse, or use camera on mobile</div></div>
           <div id="scan-badge" style="margin-left:auto;display:none"><span class="badge badge-low">Image Ready</span></div>
         </div>
-        <div class="upload-zone" id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="upload-zone" id="drop-zone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" style="overflow:hidden;max-width:100%;box-sizing:border-box">
           <input type="file" id="img-file-input" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
           <div id="upload-prompt">
             <div class="upload-icon">📷</div>
@@ -475,9 +482,9 @@
             <div class="upload-hint">JPG, PNG, WEBP — leaf closeup, field photo, stem sample</div>
             <div class="upload-hint" style="margin-top:3px;color:var(--leaf);font-weight:600">On mobile: tap to open camera directly</div>
           </div>
-          <div id="upload-preview-wrap" style="display:none">
-            <div class="scan-wrapper" id="scan-wrapper">
-              <img id="upload-preview" class="upload-preview" src="" alt="preview">
+          <div id="upload-preview-wrap" style="display:none;max-width:100%;overflow:hidden">
+            <div class="scan-wrapper" id="scan-wrapper" style="max-width:100%;overflow:hidden">
+              <img id="upload-preview" class="upload-preview" src="" alt="preview" style="max-width:100%;height:auto;display:block">
               <div class="scan-line" id="scan-line" style="display:none"></div>
             </div>
             <div class="scan-chips" id="scan-chips"></div>
@@ -637,10 +644,10 @@
       <div id="chat-messages"></div>
       <div class="llm-bar">
         <span class="llm-label">AI Engine:</span>
-        <span class="llm-chip active" id="llm-claude" onclick="setLLM('claude')">Claude</span>
-        <span class="llm-chip" id="llm-gemini" onclick="setLLM('gemini')">Gemini</span>
-        <span class="llm-chip" id="llm-openai" onclick="setLLM('openai')">GPT-4o</span>
-        <span style="margin-left:auto;font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace" id="active-llm-label">Claude (Anthropic)</span>
+        <span class="llm-chip active" id="llm-claude" style="cursor:default">Claude</span>
+        <span class="llm-chip" id="llm-gemini" title="Gemini requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">Gemini</span>
+        <span class="llm-chip" id="llm-openai" title="GPT-4o requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">GPT-4o</span>
+        <span style="margin-left:auto;font-size:10px;color:var(--leaf);font-family:'JetBrains Mono',monospace" id="active-llm-label">✓ Claude (Anthropic)</span>
       </div>
       <div class="chat-input-row">
         <input type="text" id="chat-input" placeholder="Ask about diseases, schemes, prices, soil health..." onkeydown="if(event.key==='Enter')sendChat()">
@@ -1223,26 +1230,33 @@ async function runDeepDiagnosis(){
   document.getElementById('diag-output').style.display='none';
   resetPipeline();
 
-  // Optimistic pipe animation while API call runs
-  for(let i=0;i<PIPE_CFG.length;i++) runPipeStep(i,'Running...',480+i*75);
+  // Start API call immediately (in parallel with animations)
+  const imgEl=document.getElementById('upload-preview');
+  let imgB64=null,imgMime='image/jpeg';
+  if(imgEl.src&&imgEl.src.startsWith('data:')){
+    const parts=imgEl.src.split(',');
+    imgB64=parts[1];
+    imgMime=imgEl.src.match(/data:(image\/\w+);/)?.[1]||'image/jpeg';
+  }
+
+  const apiPromise=apiPost('diagnose',{
+    crop_type:crop,crop_stage:stage,region,symptoms,
+    area_acres:parseFloat(area)||1,
+    image_base64:imgB64,image_mime:imgMime
+  }).catch(e=>{ console.error('Diagnose API error:',e); return null; });
+
+  // Animate pipeline steps while API runs (sequential, meaningful delays)
+  const stepDelays=[900,800,750,700,600,850];
+  for(let i=0;i<PIPE_CFG.length;i++){
+    await runPipeStep(i,'Analyzing...',stepDelays[i]);
+  }
+
+  // Now wait for API result
+  const result = await apiPromise;
 
   let d=0.08,k=0.25,chemRx,bioRx,pathogen,severity,ipmNotes=[],aiAnalysis,farmerAdv,agronNotes,curves;
 
-  try{
-    const imgEl=document.getElementById('upload-preview');
-    let imgB64=null,imgMime='image/jpeg';
-    if(imgEl.src&&imgEl.src.startsWith('data:')){
-      const parts=imgEl.src.split(',');
-      imgB64=parts[1];
-      imgMime=imgEl.src.match(/data:(image\/\w+);/)?.[1]||'image/jpeg';
-    }
-
-    const result=await apiPost('diagnose',{
-      crop_type:crop,crop_stage:stage,region,symptoms,
-      area_acres:parseFloat(area)||1,
-      image_base64:imgB64,image_mime:imgMime
-    });
-
+  if(result){
     d=result.decay_rate; k=result.recovery_k;
     chemRx=result.chemical_rx; bioRx=result.bio_rx;
     pathogen=result.pathogen; severity=result.severity;
@@ -1261,9 +1275,7 @@ async function runDeepDiagnosis(){
         if(dotEl){dotEl.className='pipe-dot done';dotEl.textContent='✓';}
       });
     }
-
-  }catch(e){
-    console.error('Diagnose API error:',e);
+  } else {
     const sym=symptoms.toLowerCase();
     if(sym.includes('blight')||sym.includes('ring')||sym.includes('brown')){d=0.12;k=0.28;pathogen='Alternaria solani';severity='HIGH';chemRx='Mancozeb 75 WP at 2g per liter. Spray every 7 days for 3 cycles. PHI: 14 days.';bioRx='Trichoderma viride compost at 100g per plant. Pseudomonas fluorescens at 10ml per liter.';ipmNotes=['Remove infected lower leaves immediately','Switch to drip irrigation','Use resistant variety next season'];}
     else if(sym.includes('pustule')||sym.includes('rust')||sym.includes('orange')){d=0.10;k=0.30;pathogen='Puccinia striiformis';severity='HIGH';chemRx='Propiconazole 25 EC at 1ml per liter. PHI: 21 days.';bioRx='5% NSKE spray every 10 days.';ipmNotes=['Use DBW-222 or HD-3086 wheat varieties','Timely sowing','Balanced NPK'];}
@@ -1339,11 +1351,14 @@ Your knowledge includes:
 Respond in the same language the user writes in — Hindi or English. Be warm, practical, specific. Reference sources when helpful. About 140 words per response. Use plain text, no asterisks or bullets.`;
 
 function setLLM(llm){
-  activeLLM=llm;
-  ['claude','gemini','openai'].forEach(l=>document.getElementById('llm-'+l).classList.toggle('active',l===llm));
-  const labels={claude:'Claude (Anthropic)',gemini:'Gemini (Google)',openai:'GPT-4o (OpenAI)'};
-  document.getElementById('active-llm-label').textContent=labels[llm];
-  addMsg('ai',`Switched to ${labels[llm]}. Note: Gemini and GPT-4o require their respective API keys configured on the backend server. Claude is the default and works here.`);
+  // Only Claude is available — Gemini and GPT-4o require backend API keys
+  if(llm !== 'claude'){
+    showToast('Gemini and GPT-4o require backend API keys. Claude is active and working.');
+    return;
+  }
+  activeLLM='claude';
+  document.getElementById('llm-claude').classList.add('active');
+  document.getElementById('active-llm-label').textContent='✓ Claude (Anthropic)';
 }
 
 async function sendChat(){
