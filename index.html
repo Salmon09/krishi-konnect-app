@@ -638,24 +638,32 @@
   </div>
 
   <div class="col-7-5">
-    <!-- Chat -->
-    <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px">
-        <div class="card-icon">💬</div>
-        <div><div class="card-title">KrishiAI Chat</div><div class="card-desc">English, Hindi, Punjabi, Telugu, Marathi — any language</div></div>
-        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="clearChat()">Clear</button>
+    <!-- Left column: Chat + Quick Questions -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px">
+          <div class="card-icon">💬</div>
+          <div><div class="card-title">KrishiAI Chat</div><div class="card-desc">English, Hindi, Punjabi, Telugu, Marathi — any language</div></div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="clearChat()">Clear</button>
+        </div>
+        <div id="chat-messages"></div>
+        <div class="llm-bar">
+          <span class="llm-label">AI Engine:</span>
+          <span class="llm-chip active" id="llm-claude" style="cursor:default">Claude</span>
+          <span class="llm-chip" id="llm-gemini" title="Gemini requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">Gemini</span>
+          <span class="llm-chip" id="llm-openai" title="GPT-4o requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">GPT-4o</span>
+          <span style="margin-left:auto;font-size:10px;color:var(--leaf);font-family:'JetBrains Mono',monospace" id="active-llm-label">✓ Claude (Anthropic)</span>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Ask about diseases, schemes, prices, soil health..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+        </div>
       </div>
-      <div id="chat-messages"></div>
-      <div class="llm-bar">
-        <span class="llm-label">AI Engine:</span>
-        <span class="llm-chip active" id="llm-claude" style="cursor:default">Claude</span>
-        <span class="llm-chip" id="llm-gemini" title="Gemini requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">Gemini</span>
-        <span class="llm-chip" id="llm-openai" title="GPT-4o requires a backend API key — not available" style="opacity:0.35;cursor:not-allowed;pointer-events:none">GPT-4o</span>
-        <span style="margin-left:auto;font-size:10px;color:var(--leaf);font-family:'JetBrains Mono',monospace" id="active-llm-label">✓ Claude (Anthropic)</span>
-      </div>
-      <div class="chat-input-row">
-        <input type="text" id="chat-input" placeholder="Ask about diseases, schemes, prices, soil health..." onkeydown="if(event.key==='Enter')sendChat()">
-        <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+
+      <!-- Quick Questions — directly below chat -->
+      <div class="card">
+        <div class="card-header"><div class="card-icon">⚡</div><div><div class="card-title">Quick Questions</div><div class="card-desc">Tap to ask instantly</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:6px" id="quick-q-list"></div>
       </div>
     </div>
 
@@ -679,12 +687,6 @@
           <div class="kb-topic" onclick="askTopic('harvest')"><span class="kb-topic-icon">🌾</span> Harvest Guide</div>
           <div class="kb-topic" onclick="askTopic('storage')"><span class="kb-topic-icon">🏚️</span> Post-Harvest Storage</div>
         </div>
-      </div>
-
-      <!-- Quick Questions -->
-      <div class="card">
-        <div class="card-header"><div class="card-icon">⚡</div><div><div class="card-title">Quick Questions</div><div class="card-desc">Tap to ask instantly</div></div></div>
-        <div style="display:flex;flex-direction:column;gap:6px" id="quick-q-list"></div>
       </div>
 
       <!-- Knowledge base coverage -->
