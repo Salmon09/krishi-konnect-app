@@ -1,0 +1,172 @@
+/* ============================================================
+   KrishiKonnect  —  pwa.css
+   PWA / Android-specific styles ONLY.
+   Link this AFTER your existing CSS in index.html.
+   It will NOT override or change any existing styles.
+   ============================================================ */
+
+/* ── Safe area insets for Android notch / punch-hole screens ── */
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+}
+
+/* Prevent overscroll bounce (rubber-band) on Android WebView */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Disable iOS/Android tap highlight on interactive elements */
+a, button, input, select, textarea, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Status bar padding when running as standalone PWA ── */
+@media all and (display-mode: standalone) {
+  body {
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+  }
+}
+
+/* ── Install banner — shown by JS below when criteria met ── */
+#pwa-install-banner {
+  display: none;
+  position: fixed;
+  bottom: calc(16px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  width: min(92vw, 400px);
+  background: #1b4332;
+  color: #fff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: bannerSlideUp 0.35s cubic-bezier(.22,1,.36,1) both;
+}
+#pwa-install-banner.visible { display: flex; align-items: center; gap: 14px; }
+
+@keyframes bannerSlideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+.pwa-banner-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.pwa-banner-text { flex: 1; }
+.pwa-banner-text strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #d8f3dc;
+  margin-bottom: 2px;
+}
+.pwa-banner-text span {
+  font-size: 12px;
+  color: #95d5b2;
+}
+.pwa-banner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#pwa-btn-install {
+  background: #52b788;
+  color: #1b4332;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#pwa-btn-install:hover { background: #74c69d; }
+#pwa-btn-dismiss {
+  background: transparent;
+  color: #95d5b2;
+  border: none;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  padding: 2px;
+}
+#pwa-btn-dismiss:hover { color: #fff; }
+
+/* ── Offline indicator bar ── */
+#pwa-offline-bar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 99998;
+  background: #e63946;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px calc(8px + var(--safe-top));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+#pwa-offline-bar.visible { display: block; }
+
+/* ── Update available toast ── */
+#pwa-update-toast {
+  display: none;
+  position: fixed;
+  top: calc(16px + var(--safe-top));
+  right: 16px;
+  z-index: 99997;
+  background: #2d6a4f;
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+}
+#pwa-update-toast.visible { display: flex; }
+#pwa-update-toast button {
+  background: #52b788;
+  color: #1b4332;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ── Smooth scrolling on Android ── */
+* { scroll-behavior: smooth; }
+
+/* ── Prevent text size adjustment on orientation change ── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ── Better touch targets on mobile (min 44px) ── */
+@media (max-width: 768px) {
+  button, [role="button"], select, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+  }
+}
+
+/* ── Standalone mode: hide browser chrome placeholder space ── */
+@media all and (display-mode: standalone) {
+  #pwa-install-banner { display: none !important; }
+}

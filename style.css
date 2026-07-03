@@ -1109,3 +1109,106 @@ input::placeholder, textarea::placeholder { color: #889977; }
   .pdf-two { grid-template-columns: 1fr; }
   .pdf-header { flex-direction: column; gap: 8px; }
 }
+/* ═══════════════════════════════════════════════════════════
+   PWA / ANDROID ADDITIONS
+   Safe area, offline bar, update toast — new elements only.
+   Nothing above this line is changed.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Safe area insets for Android notch / punch-hole ── */
+:root {
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+}
+
+/* Prevent overscroll bounce on Android WebView */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Disable tap highlight on interactive elements */
+a, button, input, select, textarea, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text size adjustment on orientation change */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Status bar padding when running as standalone PWA */
+@media all and (display-mode: standalone) {
+  #topbar {
+    padding-top: var(--safe-top);
+    height: calc(56px + var(--safe-top));
+  }
+  .panel {
+    padding-top: calc(76px + var(--safe-top));
+  }
+  #install-banner {
+    display: none !important;
+  }
+}
+
+/* ── Offline indicator bar ── */
+#pwa-offline-bar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9998;
+  background: #dc2626;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  font-family: var(--sans);
+  letter-spacing: .02em;
+}
+#pwa-offline-bar.visible { display: block; }
+
+/* ── Update available toast ── */
+#pwa-update-toast {
+  display: none;
+  position: fixed;
+  top: calc(64px + var(--safe-top));
+  right: 16px;
+  z-index: 9997;
+  background: var(--forest);
+  color: #fff;
+  border-radius: var(--r);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-family: var(--sans);
+  box-shadow: var(--shadow);
+  align-items: center;
+  gap: 10px;
+  max-width: 280px;
+}
+#pwa-update-toast.visible { display: flex; }
+#pwa-update-toast button {
+  background: var(--sprout);
+  color: var(--forest);
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+#pwa-update-toast button:hover { background: var(--leaf); color: #fff; }
+
+/* ── Better touch targets on mobile (min 44px) ── */
+@media (max-width: 768px) {
+  button, [role="button"], select {
+    min-height: 44px;
+  }
+  .btn-sm { min-height: 36px; }
+  .nav-tab { min-height: 36px; }
+}

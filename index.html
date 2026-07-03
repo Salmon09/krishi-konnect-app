@@ -8,7 +8,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KrishiKonnect">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="KrishiKonnect">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <title>KrishiKonnect — AI Crop Intelligence</title>
 
 <!-- Fonts -->
@@ -20,6 +23,8 @@
 
 <!-- External CSS -->
 <link rel="stylesheet" href="style.css">
+<!-- PWA-only additions (safe area, offline bar, update toast) -->
+<link rel="stylesheet" href="pwa.css">
 
 <!-- Print-only styles inline (critical) -->
 <style>
@@ -70,6 +75,17 @@
     <button class="btn btn-primary btn-sm" id="install-btn">Install</button>
     <button class="btn btn-ghost btn-sm" onclick="dismissInstall()">Later</button>
   </div>
+</div>
+
+<!-- ══ PWA OFFLINE BAR ══ -->
+<div id="pwa-offline-bar">
+  📵 You are offline — AI features unavailable. Mandi data may be outdated.
+</div>
+
+<!-- ══ PWA UPDATE TOAST ══ -->
+<div id="pwa-update-toast">
+  <span>🌾 New update ready!</span>
+  <button onclick="window.location.reload()">Refresh</button>
 </div>
 
 <!-- ══ AUTH GATE (MANDATORY — blocks app until signed up/in) ══ -->
@@ -1738,10 +1754,41 @@ window.addEventListener('load',()=>{
 // Close dropdown on Escape
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.getElementById('user-dropdown').classList.remove('open'); });
 
-// Add fade-out keyframe dynamically
+// ══ ADD FADE-OUT KEYFRAME ═══════════════════════════
 const style=document.createElement('style');
 style.textContent='@keyframes fade-out{from{opacity:1}to{opacity:0}}';
 document.head.appendChild(style);
+</script>
+
+<!-- ══ PWA: Service Worker + Offline Detection ══ -->
+<script>
+  /* 1. Register Service Worker */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => {
+          console.log('[KrishiKonnect] SW registered:', reg.scope);
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                document.getElementById('pwa-update-toast').classList.add('visible');
+              }
+            });
+          });
+        })
+        .catch(err => console.warn('[KrishiKonnect] SW error:', err));
+    });
+  }
+
+  /* 2. Offline / Online bar */
+  const offlineBar = document.getElementById('pwa-offline-bar');
+  function updateOnlineStatus() {
+    offlineBar.classList.toggle('visible', !navigator.onLine);
+  }
+  window.addEventListener('online',  updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
 </script>
 </body>
 </html>
