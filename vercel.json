@@ -1,14 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/manifest.json", "destination": "/manifest.json" },
-    { "source": "/sw.js", "destination": "/sw.js" },
-    { "source": "/offline.html", "destination": "/offline.html" },
-    { "source": "/icon-72.png", "destination": "/icon-72.png" },
-    { "source": "/icon-96.png", "destination": "/icon-96.png" },
-    { "source": "/icon-128.png", "destination": "/icon-128.png" },
-    { "source": "/icon-144.png", "destination": "/icon-144.png" },
-    { "source": "/icon-192.png", "destination": "/icon-192.png" },
-    { "source": "/icon-512.png", "destination": "/icon-512.png" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+
 }
