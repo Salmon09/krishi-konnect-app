@@ -1,4 +1,4 @@
-const CACHE_VERSION   = 'v1';
+const CACHE_VERSION   = 'v2';
 const STATIC_CACHE    = `krishikonnect-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE   = `krishikonnect-dynamic-${CACHE_VERSION}`;
 const OFFLINE_PAGE    = '/offline.html';
