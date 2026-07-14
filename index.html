@@ -851,8 +851,19 @@ function loginUser(user){
   saveSession(user);
   
   const gate=document.getElementById('auth-gate');
+  /* Kill interactivity IMMEDIATELY — never wait on a timer for this.
+     This guarantees the gate can never trap touch/scroll again,
+     even if the fade animation gets delayed or interrupted
+     (e.g. tab backgrounded on mobile, which throttles setTimeout). */
+  gate.style.pointerEvents='none';
+  gate.setAttribute('aria-hidden','true');
   gate.style.animation='fade-out .3s ease forwards';
-  setTimeout(()=>gate.style.display='none',300);
+  gate.addEventListener('animationend', function hideGate(){
+    gate.style.display='none';
+    gate.removeEventListener('animationend', hideGate);
+  });
+  /* Backup in case animationend never fires for any reason */
+  setTimeout(()=>{ gate.style.display='none'; }, 500);
   
   const safeName = user.name || 'User';
   let init = 'U';
@@ -870,8 +881,11 @@ function doLogout(){
   currentUser=null;
   saveSession(null);
   document.getElementById('user-dropdown').classList.remove('open');
-  document.getElementById('auth-gate').style.display='flex';
-  document.getElementById('auth-gate').style.animation='gate-in .3s ease';
+  const gate=document.getElementById('auth-gate');
+  gate.style.display='flex';
+  gate.style.pointerEvents='auto';
+  gate.removeAttribute('aria-hidden');
+  gate.style.animation='gate-in .3s ease';
   document.getElementById('gate-err').style.display='none';
 }
 

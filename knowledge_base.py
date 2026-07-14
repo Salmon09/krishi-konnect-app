@@ -1,542 +1,799 @@
 """
-KrishiKonnect Agricultural Knowledge Base
-Complete disease profiles, regional data, mandi pricing, ICAR prescriptions.
-Used by all AI agents as their grounding context.
+KrishiKonnect — Knowledge Base
+ICAR-aligned disease profiles, regional agro-climate data,
+mandi price references, and AI agent prompts.
 """
 
-from typing import Dict, List, Optional, Any
-
 # ═══════════════════════════════════════════════════════════════
-# CROP DISEASE PROFILES — ICAR-Validated
+# DISEASE PROFILES  (ICAR-referenced)
 # ═══════════════════════════════════════════════════════════════
 
-DISEASE_PROFILES: Dict[str, Dict] = {
-    "PATH-ALT-BLIGHT": {
-        "name": "Early Blight",
+DISEASE_PROFILES = {
+    # ── TOMATO ────────────────────────────────────────────────
+    "early_blight": {
+        "name": "Early Blight (Alternaria solani)",
+        "crop": "Tomato",
         "pathogen": "Alternaria solani",
-        "class": "Fungal — Deuteromycetes",
-        "crops": ["Tomato", "Potato", "Brinjal"],
-        "symptoms": ["concentric rings", "brown spots", "yellow halo", "target-board pattern", "lower leaf necrosis"],
-        "spread": "Airborne conidia, splash dispersal, infected seed",
-        "conditions": "Warm temperatures 24-29C, high humidity >80%, wet leaf surfaces",
-        "decay_rate": 0.12,
-        "recovery_k": 0.28,
+        "class": "Fungal",
         "severity": "HIGH",
+        "symptoms": ["concentric brown rings", "yellow halo", "target board pattern", "lower leaf progression"],
+        "conditions": ["warm humid", "25-30°C", "leaf wetness"],
         "chemical_rx": {
-            "primary": "Mancozeb 75% WP at 2g per liter water. Spray every 7 days for 3 cycles.",
-            "secondary": "Chlorothalonil 75% WP at 2g per liter as alternating spray.",
-            "systemic": "Hexaconazole 5% SC at 2ml per liter for systemic control.",
+            "primary": "Mancozeb 75 WP @ 2 g/L + Azoxystrobin 23 SC @ 1 mL/L, spray every 7 days × 3 cycles",
+            "alternate": "Chlorothalonil 75 WP @ 2 g/L",
             "preharvest_interval": "14 days"
         },
         "bio_rx": {
-            "primary": "Trichoderma viride enriched compost at 100g per plant around root zone.",
-            "foliar": "Pseudomonas fluorescens at 10ml per liter, spray every 10 days.",
-            "seed": "Seed treatment with Trichoderma asperellum at 4g per kg seed before sowing.",
-            "systemic": "Spray 2% neem oil solution with 0.5ml Tween-20 per liter as sticker."
+            "primary": "Trichoderma viride @ 4 g/L soil drench + Pseudomonas fluorescens @ 10 mL/L foliar spray",
+            "notes": "Apply at 10-day intervals"
         },
         "ipm": [
             "Remove and destroy infected lower leaves immediately",
-            "Avoid overhead irrigation, switch to drip",
-            "Maintain row spacing for air circulation",
-            "Mulch soil surface to reduce splash dispersal",
-            "Rotate with non-solanaceous crops for 2 seasons",
-            "Use ICAR-recommended resistant varieties — Arka Rakshak, IIHR-Tomato-2"
+            "Avoid overhead irrigation; switch to drip",
+            "Maintain plant spacing ≥ 60 cm for airflow",
+            "Apply mulch to reduce soil splash",
+            "Rotate with non-solanaceous crops for 2 seasons"
         ],
-        "economic_threshold": "5% leaf area infected or 3 infected leaves per plant"
+        "economic_threshold": "5% defoliation or 3 lesions per leaf",
+        "decay_rate": 0.12,
+        "recovery_k": 0.28,
+        "confidence_base": 0.87
     },
-
-    "PATH-MILDEW-COAT": {
-        "name": "Powdery Mildew",
-        "pathogen": "Leveillula taurica / Oidium lycopersici",
-        "class": "Fungal — Ascomycetes (Erysiphales)",
-        "crops": ["Tomato", "Chili", "Cotton", "Cucurbits"],
-        "symptoms": ["white powdery coating", "upper leaf powder", "leaf curl", "premature drop"],
-        "spread": "Wind-dispersed conidia, favored by dry warm days and cool nights",
-        "conditions": "Temperature 20-28C, humidity 50-70%, does NOT require wet surfaces",
-        "decay_rate": 0.08,
-        "recovery_k": 0.32,
-        "severity": "MEDIUM",
+    "late_blight": {
+        "name": "Late Blight (Phytophthora infestans)",
+        "crop": "Tomato",
+        "pathogen": "Phytophthora infestans",
+        "class": "Oomycete",
+        "severity": "CRITICAL",
+        "symptoms": ["water-soaked lesions", "white mycelium underside", "brown greasy patches", "rapid collapse"],
+        "conditions": ["cool wet", "15-20°C", "high humidity >90%"],
         "chemical_rx": {
-            "primary": "Water-soluble Sulphur 80% WP at 2.5g per liter. Repeat after 12 days.",
-            "secondary": "Dinocap 48% EC at 1ml per liter for established infection.",
-            "systemic": "Trifloxystrobin 25% + Tebuconazole 50% WG at 0.5g per liter.",
+            "primary": "Metalaxyl-M + Mancozeb (Ridomil Gold) @ 2.5 g/L, spray every 5–7 days",
+            "alternate": "Cymoxanil 8% + Mancozeb 64% WP @ 3 g/L",
             "preharvest_interval": "7 days"
         },
         "bio_rx": {
-            "primary": "Ampelomyces quisqualis hyperparasite spore suspension at 5ml per liter.",
-            "foliar": "Spray 5% aqueous extract of Allium sativum (garlic) weekly.",
-            "seed": "No seed treatment required — airborne pathogen.",
-            "cultural": "Improve air circulation by canopy management."
+            "primary": "Bacillus subtilis (Serenade) @ 2 g/L, spray preventively",
+            "notes": "Not curative — use as part of IPM rotation"
         },
         "ipm": [
-            "Prune overcrowded canopy to improve airflow",
+            "Monitor weather — apply protectants before rains",
+            "Remove infected plants entirely and burn",
             "Avoid excess nitrogen fertilization",
-            "Avoid evening irrigation on foliage",
-            "Remove infected leaves and burn them",
-            "Plant resistant hybrids where available"
+            "Use resistant varieties: ICAR-TH-1, Arka Rakshak"
         ],
-        "economic_threshold": "10% leaf area covered or white pustules on 20% of plants"
+        "economic_threshold": "Any confirmed detection — act immediately",
+        "decay_rate": 0.20,
+        "recovery_k": 0.22,
+        "confidence_base": 0.91
+    },
+    "bacterial_wilt": {
+        "name": "Bacterial Wilt (Ralstonia solanacearum)",
+        "crop": "Tomato",
+        "pathogen": "Ralstonia solanacearum",
+        "class": "Bacterial",
+        "severity": "HIGH",
+        "symptoms": ["sudden wilt without yellowing", "vascular browning", "milky ooze in water test", "rapid collapse"],
+        "conditions": ["warm tropical", "soil temp >25°C", "water-logged soil"],
+        "chemical_rx": {
+            "primary": "No curative chemical. Bordeaux mixture 1% as preventive soil drench",
+            "alternate": "Streptocycline 200 ppm spray (early stage only)",
+            "preharvest_interval": "N/A"
+        },
+        "bio_rx": {
+            "primary": "Bacillus subtilis + Trichoderma harzianum soil application @ 5 g/kg soil",
+            "notes": "Biocontrol most effective as preventive"
+        },
+        "ipm": [
+            "Remove and destroy wilted plants including roots",
+            "Do not replant solanaceous crops for 3+ seasons",
+            "Improve drainage; avoid waterlogging",
+            "Solarize soil with polythene for 4–6 weeks",
+            "Use grafted plants on Solanum torvum rootstock"
+        ],
+        "economic_threshold": "Any confirmed case — no recovery possible",
+        "decay_rate": 0.18,
+        "recovery_k": 0.15,
+        "confidence_base": 0.83
     },
 
-    "PATH-RUST-PST": {
-        "name": "Yellow Rust / Stripe Rust",
+    # ── WHEAT ─────────────────────────────────────────────────
+    "stripe_rust": {
+        "name": "Yellow/Stripe Rust (Puccinia striiformis)",
+        "crop": "Wheat",
         "pathogen": "Puccinia striiformis f.sp. tritici",
-        "class": "Fungal — Basidiomycetes (Uredinales)",
-        "crops": ["Wheat", "Barley", "Rye"],
-        "symptoms": ["orange-yellow pustules", "stripe pattern", "urediniospore deposits", "yellow linear streaks"],
-        "spread": "Wind-dispersed urediniospores over long distances",
-        "conditions": "Cool 10-15C, high humidity, dew, late sown wheat in northern plains",
-        "decay_rate": 0.10,
-        "recovery_k": 0.30,
+        "class": "Fungal",
         "severity": "HIGH",
+        "symptoms": ["linear yellow pustules on leaves", "stripe pattern parallel to veins", "urediniospore deposits", "sheath infection"],
+        "conditions": ["cool humid", "10-15°C", "dew or light rain"],
         "chemical_rx": {
-            "primary": "Propiconazole 25% EC at 1ml per liter. Apply at first appearance.",
-            "secondary": "Tebuconazole 250 EC at 1.25ml per liter as follow-up spray.",
-            "systemic": "Mancozeb 75% WP at 2.5g per liter as preventive.",
+            "primary": "Propiconazole 25 EC @ 1 mL/L, spray at flag leaf stage",
+            "alternate": "Tebuconazole 25.9 EC @ 1 mL/L",
             "preharvest_interval": "21 days"
         },
         "bio_rx": {
-            "primary": "5% NSKE (Neem Seed Kernel Extract) spray every 10 days.",
-            "cultural": "Crop rotation with non-host legumes (chickpea, lentil).",
-            "seed": "Carboxin 75% WP at 2g per kg seed for seed-borne control.",
-            "systemic": "Bacillus amyloliquefaciens formulation at 5ml per liter."
+            "primary": "5% NSKE (Neem Seed Kernel Extract) spray @ 10-day intervals",
+            "notes": "Suppressive not curative"
         },
         "ipm": [
-            "Grow ICAR-recommended resistant varieties — DBW-222, HD-3086, PBW-725",
-            "Timely sowing — avoid late sowing in Punjab/Haryana",
+            "Sow resistant varieties: DBW-222, HD-3086, PBW-502",
+            "Timely sowing — avoid very early or late sowing",
             "Balanced NPK — avoid excess nitrogen",
-            "Monitor regularly from January to March in northern plains",
-            "Burn crop residue after harvest"
+            "Monitor from tillering stage weekly"
         ],
-        "economic_threshold": "Trace to 5% infection on flag leaf demands immediate spray"
+        "economic_threshold": "5% leaf area infected at any growth stage",
+        "decay_rate": 0.10,
+        "recovery_k": 0.30,
+        "confidence_base": 0.89
     },
-
-    "PATH-BACT-WILT": {
-        "name": "Bacterial Wilt",
-        "pathogen": "Ralstonia solanacearum",
-        "class": "Bacterial — Betaproteobacteria",
-        "crops": ["Tomato", "Potato", "Brinjal", "Chili", "Groundnut"],
-        "symptoms": ["sudden wilting", "drooping", "vascular browning", "bacterial ooze", "internal stem discolor"],
-        "spread": "Soil-borne, contaminated irrigation water, infected transplants",
-        "conditions": "Warm soils 25-35C, waterlogged or poorly drained fields, pH 6-7",
-        "decay_rate": 0.15,
-        "recovery_k": 0.18,
-        "severity": "CRITICAL",
+    "powdery_mildew_wheat": {
+        "name": "Powdery Mildew (Blumeria graminis)",
+        "crop": "Wheat",
+        "pathogen": "Blumeria graminis f.sp. tritici",
+        "class": "Fungal",
+        "severity": "MEDIUM",
+        "symptoms": ["white powdery colonies on leaves", "yellowing below patches", "stem and ear infection"],
+        "conditions": ["cool dry to moderately humid", "15-20°C"],
         "chemical_rx": {
-            "primary": "Copper oxychloride 50% WP at 3g per liter soil drench around root zone.",
-            "secondary": "Streptomycin sulphate 90% + Tetracycline HCl 10% at 0.3g per liter spray.",
-            "systemic": "No systemic bactericide available — management is primary approach.",
-            "preharvest_interval": "N/A — soil treatment only"
+            "primary": "Triadimefon 25 WP @ 1 g/L or Propiconazole 25 EC @ 1 mL/L",
+            "alternate": "Sulphur 80 WP @ 3 g/L",
+            "preharvest_interval": "14 days"
         },
         "bio_rx": {
-            "primary": "Trichoderma harzianum soil drench at 10g per liter, 500ml per plant.",
-            "foliar": "Pseudomonas fluorescens at 10ml per liter as preventive drench.",
-            "seed": "Seed treatment with Bacillus subtilis 1% WP at 10g per kg.",
-            "cultural": "Soil solarization with transparent polythene for 30 days pre-planting."
+            "primary": "Ampelomyces quisqualis based biocontrol @ label rate",
+            "notes": "Apply early in disease cycle"
         },
         "ipm": [
-            "REMOVE AND DESTROY all wilted plants immediately with roots",
-            "Do NOT replant solanaceous crops in same plot for minimum 3 years",
-            "Use grafted seedlings on resistant rootstocks (Solanum sisymbriifolium)",
-            "Improve drainage — raised beds recommended",
-            "Avoid mechanical injury to roots during weeding",
-            "Soil pH correction to 6.5-7 using lime application"
+            "Use resistant varieties",
+            "Avoid dense canopy through proper spacing",
+            "Reduce nitrogen application rates"
         ],
-        "economic_threshold": "Even 1% incidence requires immediate isolation and removal"
+        "economic_threshold": "10% leaf area at boot stage",
+        "decay_rate": 0.07,
+        "recovery_k": 0.32,
+        "confidence_base": 0.82
     },
 
-    "PATH-BLAST-MAG": {
-        "name": "Rice Blast",
+    # ── RICE ──────────────────────────────────────────────────
+    "rice_blast": {
+        "name": "Rice Blast (Magnaporthe oryzae)",
+        "crop": "Rice",
         "pathogen": "Magnaporthe oryzae",
-        "class": "Fungal — Ascomycetes",
-        "crops": ["Rice"],
-        "symptoms": ["spindle lesions", "grey center", "brown border", "eye-shaped spots", "neck rot", "panicle blast"],
-        "spread": "Airborne conidia, infected seed, infected stubble",
-        "conditions": "Temperature 24-28C, high humidity, excessive nitrogen, close planting",
+        "class": "Fungal",
+        "severity": "HIGH",
+        "symptoms": ["spindle-shaped grey lesions", "brown borders", "lesions coalescing", "neck blast at panicle"],
+        "conditions": ["moderate temperature 24-28°C", "high humidity", "heavy dew"],
+        "chemical_rx": {
+            "primary": "Tricyclazole 75 WP @ 0.6 g/L, spray at tillering and panicle initiation",
+            "alternate": "Carbendazim 50 WP @ 1 g/L or Isoprothiolane 40 EC @ 1.5 mL/L",
+            "preharvest_interval": "14 days"
+        },
+        "bio_rx": {
+            "primary": "Pseudomonas fluorescens @ 10 mL/L foliar spray",
+            "notes": "Seed treatment with Trichoderma also effective"
+        },
+        "ipm": [
+            "Use blast-resistant varieties: MTU-1010, IR-64, BPT-5204",
+            "Avoid excess nitrogen — split urea application",
+            "Maintain 2–3 cm water level during tillering",
+            "Remove and burn diseased stubble after harvest"
+        ],
+        "economic_threshold": "Leaf blast: 2% leaf area; neck blast: any infection",
         "decay_rate": 0.09,
         "recovery_k": 0.22,
+        "confidence_base": 0.85
+    },
+    "bacterial_leaf_blight": {
+        "name": "Bacterial Leaf Blight (Xanthomonas oryzae)",
+        "crop": "Rice",
+        "pathogen": "Xanthomonas oryzae pv. oryzae",
+        "class": "Bacterial",
         "severity": "HIGH",
+        "symptoms": ["water-soaked margins", "yellow to straw-colored leaf blight", "wilting of young leaves (kresek)"],
+        "conditions": ["flood water", "warm >30°C", "cyclone/storm conditions"],
         "chemical_rx": {
-            "primary": "Tricyclazole 75% WP at 0.6g per liter. Apply at tillering and panicle initiation.",
-            "secondary": "Isoprothiolane 40% EC at 1.5ml per liter as alternative.",
-            "systemic": "Propiconazole 25 EC at 1ml per liter for neck blast control.",
+            "primary": "Streptocycline @ 100 ppm + Copper oxychloride 50 WP @ 2 g/L",
+            "alternate": "Copper hydroxide @ 2 g/L",
+            "preharvest_interval": "21 days"
+        },
+        "bio_rx": {
+            "primary": "Pseudomonas fluorescens @ 10 mL/L spray at 30 and 50 DAS",
+            "notes": "Biocontrol agents have moderate efficacy only"
+        },
+        "ipm": [
+            "Use resistant varieties: Pusa Basmati-1, IR-36",
+            "Drain flooded fields promptly",
+            "Avoid high nitrogen fertilization",
+            "Do not use flood water from infected areas for irrigation"
+        ],
+        "economic_threshold": "10% leaf area affected",
+        "decay_rate": 0.11,
+        "recovery_k": 0.24,
+        "confidence_base": 0.80
+    },
+
+    # ── COTTON ────────────────────────────────────────────────
+    "cotton_bollworm": {
+        "name": "American Bollworm (Helicoverpa armigera)",
+        "crop": "Cotton",
+        "pathogen": "Helicoverpa armigera (insect)",
+        "class": "Insect Pest",
+        "severity": "HIGH",
+        "symptoms": ["shot-hole feeding on squares", "boll damage with frass", "larval entry holes", "premature shedding"],
+        "conditions": ["dry hot conditions", "April-October"],
+        "chemical_rx": {
+            "primary": "Emamectin benzoate 5 SG @ 0.5 g/L or Spinosad 45 SC @ 0.3 mL/L",
+            "alternate": "Chlorantraniliprole 18.5 SC @ 0.3 mL/L",
+            "preharvest_interval": "14 days"
+        },
+        "bio_rx": {
+            "primary": "NPV (Nuclear Polyhedrosis Virus) @ 250 LE/ha; Bt (Bacillus thuringiensis) @ 1 kg/ha",
+            "notes": "Apply at early instar stage for best effect"
+        },
+        "ipm": [
+            "Install pheromone traps @ 5/ha; threshold 2 moths/trap/night",
+            "Hand-pick egg masses and early instars",
+            "Grow Bt cotton to reduce chemical use",
+            "Inter-crop with maize or sorghum as trap crop"
+        ],
+        "economic_threshold": "5% damage on bolls or 2 larvae per plant",
+        "decay_rate": 0.13,
+        "recovery_k": 0.25,
+        "confidence_base": 0.78
+    },
+    "powdery_mildew_cotton": {
+        "name": "Powdery Mildew (Leveillula taurica)",
+        "crop": "Cotton",
+        "pathogen": "Leveillula taurica",
+        "class": "Fungal",
+        "severity": "MEDIUM",
+        "symptoms": ["white powdery coating on upper leaf surface", "leaf curl", "premature drop"],
+        "conditions": ["dry hot days", "cool nights", "low humidity"],
+        "chemical_rx": {
+            "primary": "Dinocap 48 EC @ 1 mL/L or Hexaconazole 5 SC @ 2 mL/L",
+            "alternate": "Sulphur 80 WP @ 3 g/L",
+            "preharvest_interval": "14 days"
+        },
+        "bio_rx": {
+            "primary": "Trichoderma viride @ 4 g/L spray",
+            "notes": ""
+        },
+        "ipm": [
+            "Remove and destroy severely infected leaves",
+            "Maintain optimal plant density",
+            "Avoid excess potassium deficiency — apply balanced fertilizer"
+        ],
+        "economic_threshold": "20% leaf area infected",
+        "decay_rate": 0.06,
+        "recovery_k": 0.30,
+        "confidence_base": 0.76
+    },
+
+    # ── POTATO ────────────────────────────────────────────────
+    "potato_late_blight": {
+        "name": "Potato Late Blight (Phytophthora infestans)",
+        "crop": "Potato",
+        "pathogen": "Phytophthora infestans",
+        "class": "Oomycete",
+        "severity": "CRITICAL",
+        "symptoms": ["water-soaked dark brown lesions on leaf margins", "white mycelium underside", "tubers show internal browning", "rapid necrosis"],
+        "conditions": ["cool wet", "10-18°C", "humidity >90%"],
+        "chemical_rx": {
+            "primary": "Metalaxyl-M 4% + Mancozeb 64% WP @ 2.5 g/L every 5–7 days",
+            "alternate": "Cymoxanil 8% + Mancozeb 64% WP @ 3 g/L",
             "preharvest_interval": "10 days"
         },
         "bio_rx": {
-            "primary": "Pseudomonas fluorescens at 10ml per liter, spray at 10-day intervals.",
-            "seed": "Seed treatment with Pseudomonas fluorescens Pf1 at 10g per kg seed.",
-            "soil": "Trichoderma viride at 2.5kg per acre mixed in FYM.",
-            "cultural": "Silicon supplementation as 100kg per acre potassium silicate."
+            "primary": "Bacillus subtilis @ 2 g/L as preventive spray",
+            "notes": "Begin at tuber initiation stage"
         },
         "ipm": [
-            "Use ICAR blast-resistant varieties — MTU 1010, Swarna Sub1, Pusa 1460",
-            "Balanced fertilization — avoid excess nitrogen above 60kg/ha",
-            "Wider row spacing — SRI method reduces humidity",
-            "Drain fields periodically to reduce humidity",
-            "Destroy crop residue and ratoon shoots after harvest"
+            "Use certified disease-free seed tubers",
+            "Hilling up to protect tubers from sporangia wash",
+            "Maintain wide row spacing for airflow",
+            "Apply preventively before rains during cool season"
         ],
-        "economic_threshold": "1 lesion per 5 tillers or 10% neck infection at heading stage"
+        "economic_threshold": "Any confirmed lesion — act same day",
+        "decay_rate": 0.18,
+        "recovery_k": 0.20,
+        "confidence_base": 0.88
     },
 
-    "BIOT-STRESS-GEN": {
-        "name": "Abiotic / Nutritional Stress",
-        "pathogen": "Non-pathogenic — Environmental or Nutritional",
-        "class": "Abiotic Stress",
-        "crops": ["All crops"],
-        "symptoms": ["general yellowing", "tip burn", "interveinal chlorosis", "stunting", "wilting without pathogen"],
-        "spread": "Non-infectious — soil, irrigation, weather",
-        "conditions": "Nutrient deficiency, pH imbalance, drought, waterlogging, heat stress",
-        "decay_rate": 0.05,
-        "recovery_k": 0.20,
-        "severity": "LOW",
+    # ── MAIZE ─────────────────────────────────────────────────
+    "maize_fall_armyworm": {
+        "name": "Fall Armyworm (Spodoptera frugiperda)",
+        "crop": "Maize",
+        "pathogen": "Spodoptera frugiperda (insect)",
+        "class": "Insect Pest",
+        "severity": "HIGH",
+        "symptoms": ["window-pane feeding", "ragged holes in whorls", "frass in whorl", "multiple entry holes"],
+        "conditions": ["warm tropical", "May-September"],
         "chemical_rx": {
-            "primary": "Copper oxychloride 50% WP at 3g per liter as prophylactic foliar spray.",
-            "secondary": "Conduct soil test before any intervention to identify exact deficiency.",
-            "systemic": "Micronutrient foliar spray (ZnSO4 0.5% + FeSO4 0.5%) if interveinal chlorosis.",
-            "preharvest_interval": "5 days"
+            "primary": "Emamectin benzoate 5 SG @ 0.5 g/L or Chlorantraniliprole 18.5 SC @ 0.4 mL/L into whorl",
+            "alternate": "Spinetoram 11.7 SC @ 0.5 mL/L",
+            "preharvest_interval": "14 days"
         },
         "bio_rx": {
-            "primary": "Bacillus subtilis organic formulation at 5ml per liter weekly.",
-            "cultural": "Conduct soil test — apply lime if pH < 5.5, sulphur if pH > 8.0.",
-            "seed": "Azospirillum + PSB biofertilizer seed treatment at 25g per kg.",
-            "irrigation": "Check irrigation water quality — EC and SAR levels."
+            "primary": "Bt (Bacillus thuringiensis var. kurstaki) @ 1 kg/ha; Beauveria bassiana @ 5 g/L",
+            "notes": "Apply into whorl in evening hours"
         },
         "ipm": [
-            "Conduct soil and water testing immediately",
-            "Isolate affected plants to rule out pathogen",
-            "Monitor irrigation schedule — drought or waterlogging check",
-            "Apply balanced NPK based on soil test recommendation",
-            "Foliar spray of 1% DAP solution for quick nitrogen boost"
+            "Release Trichogramma chilonis egg parasitoids @ 50,000/ha",
+            "Apply sand + lime 9:1 into whorl as physical barrier",
+            "Use pheromone traps for monitoring",
+            "Early sowing to escape peak infestation"
         ],
-        "economic_threshold": "Monitor for 5 days — if no improvement, suspect pathogen"
-    }
+        "economic_threshold": "10% plants showing fresh damage",
+        "decay_rate": 0.11,
+        "recovery_k": 0.26,
+        "confidence_base": 0.82
+    },
+
+    # ── CHILI ─────────────────────────────────────────────────
+    "chili_anthracnose": {
+        "name": "Anthracnose / Dieback (Colletotrichum capsici)",
+        "crop": "Chili",
+        "pathogen": "Colletotrichum capsici",
+        "class": "Fungal",
+        "severity": "HIGH",
+        "symptoms": ["circular sunken lesions on fruits", "concentric rings", "dieback of shoots", "seed infection"],
+        "conditions": ["warm humid", "25-30°C", "rain splash"],
+        "chemical_rx": {
+            "primary": "Carbendazim 50 WP @ 1 g/L + Mancozeb 75 WP @ 2 g/L, spray every 10 days",
+            "alternate": "Azoxystrobin 23 SC @ 1 mL/L",
+            "preharvest_interval": "7 days"
+        },
+        "bio_rx": {
+            "primary": "Trichoderma harzianum @ 4 g/L foliar spray",
+            "notes": "Seed treatment with Carbendazim 2g/kg critical"
+        },
+        "ipm": [
+            "Hot water seed treatment at 52°C for 30 min",
+            "Collect and destroy fallen fruits daily",
+            "Provide good drainage and avoid dense planting"
+        ],
+        "economic_threshold": "5% fruit damage",
+        "decay_rate": 0.10,
+        "recovery_k": 0.27,
+        "confidence_base": 0.80
+    },
+
+    # ── GENERAL / ABIOTIC ─────────────────────────────────────
+    "abiotic_stress": {
+        "name": "Abiotic / Nutritional Stress",
+        "crop": "General",
+        "pathogen": "Non-pathogenic",
+        "class": "Abiotic",
+        "severity": "LOW",
+        "symptoms": ["interveinal chlorosis", "tip burn", "stunted growth", "purpling", "edge necrosis"],
+        "conditions": ["nutrient deficiency", "drought", "waterlogging", "pH imbalance"],
+        "chemical_rx": {
+            "primary": "Conduct soil and tissue test first. Apply balanced NPK based on report.",
+            "alternate": "Micronutrient foliar spray: 0.5% ZnSO4 + 0.1% Borax for zinc/boron deficiency",
+            "preharvest_interval": "N/A"
+        },
+        "bio_rx": {
+            "primary": "Vermicompost @ 2 t/ha + Bacillus subtilis soil drench",
+            "notes": "Improve soil organic matter and microbiome"
+        },
+        "ipm": [
+            "Soil test every 3 years — submit to local KVK",
+            "Check irrigation water EC and pH",
+            "Apply organic matter annually",
+            "Check for root damage from nematodes"
+        ],
+        "economic_threshold": "Variable — consult soil health card",
+        "decay_rate": 0.05,
+        "recovery_k": 0.20,
+        "confidence_base": 0.65
+    },
 }
 
 # ═══════════════════════════════════════════════════════════════
 # REGIONAL AGRO-CLIMATE PROFILES
 # ═══════════════════════════════════════════════════════════════
 
-REGIONAL_PROFILES: Dict[str, Dict] = {
+REGIONAL_PROFILES = {
     "Punjab (Alluvial Plains)": {
-        "soil": "Deep alluvial, loamy to silty loam, pH 7.5-8.5",
-        "climate": "Semi-arid, hot summers, cold winters, monsoon July-September",
-        "avg_rainfall": "500-700mm annual",
-        "major_crops": ["Wheat", "Rice", "Cotton", "Maize", "Sugarcane"],
-        "high_risk_diseases": ["PATH-RUST-PST", "PATH-BLAST-MAG"],
-        "risk_months": {"Rust": "Jan-Mar", "Blast": "Jul-Sep"},
-        "icar_center": "PAU Ludhiana",
-        "lat": 31.1, "lng": 75.3,
-        "major_mandis": [
-            {"name": "Khanna Mandi", "city": "Khanna", "lat": 30.7, "lng": 76.22},
-            {"name": "Ludhiana APMC", "city": "Ludhiana", "lat": 30.9, "lng": 75.85},
-            {"name": "Amritsar Grain Market", "city": "Amritsar", "lat": 31.63, "lng": 74.87},
-            {"name": "Patiala Mandi", "city": "Patiala", "lat": 30.34, "lng": 76.38}
-        ]
+        "soil": "Deep alluvial loam, high organic matter",
+        "rainfall": "500–700 mm, monsoon July–September",
+        "temperature": "Summer 35–45°C, Winter 2–10°C",
+        "major_crops": ["Wheat", "Rice (Basmati)", "Maize", "Potato", "Cotton"],
+        "disease_pressure": {"stripe_rust": "HIGH", "bacterial_leaf_blight": "MEDIUM", "powdery_mildew_wheat": "MEDIUM"},
+        "risk_season": "October–March (Rabi diseases); July–August (Kharif pests)",
+        "water_table": "Shallow — 3–8 m, waterlogging risk",
+        "icar_kvk": "PAU Ludhiana; KVK Amritsar"
     },
-    "Maharashtra (Deccan Plateau)": {
-        "soil": "Black cotton soil (Vertisol), deep, clay-rich, pH 7.0-8.5",
-        "climate": "Semi-arid to sub-humid, monsoon Jun-Sep, dry rest of year",
-        "avg_rainfall": "600-900mm annual",
-        "major_crops": ["Cotton", "Soybean", "Sugarcane", "Jowar", "Tur"],
-        "high_risk_diseases": ["PATH-MILDEW-COAT", "PATH-ALT-BLIGHT"],
-        "risk_months": {"Mildew": "Oct-Dec", "Blight": "Aug-Oct"},
-        "icar_center": "NRRI Nagpur / MPKV Rahuri",
-        "lat": 19.7, "lng": 75.7,
-        "major_mandis": [
-            {"name": "Lasalgaon APMC", "city": "Lasalgaon", "lat": 20.12, "lng": 74.22},
-            {"name": "Pune Market", "city": "Pune", "lat": 18.52, "lng": 73.86},
-            {"name": "Nagpur Mandi", "city": "Nagpur", "lat": 21.14, "lng": 79.09},
-            {"name": "Solapur APMC", "city": "Solapur", "lat": 17.68, "lng": 75.9}
-        ]
-    },
-    "Karnataka (Red Lateritic)": {
-        "soil": "Red lateritic, sandy loam, pH 5.5-7.0, low water retention",
-        "climate": "Tropical semi-arid north, humid south, bimodal rainfall",
-        "avg_rainfall": "700-1400mm annual",
-        "major_crops": ["Tomato", "Ragi", "Maize", "Sunflower", "Arecanut"],
-        "high_risk_diseases": ["PATH-ALT-BLIGHT", "PATH-BACT-WILT"],
-        "risk_months": {"Blight": "Sep-Nov", "Wilt": "Jun-Sep"},
-        "icar_center": "UAS Bangalore / IIHR Hesaraghatta",
-        "lat": 15.3, "lng": 75.7,
-        "major_mandis": [
-            {"name": "Kolar APMC", "city": "Kolar", "lat": 13.13, "lng": 78.13},
-            {"name": "Hubli Market", "city": "Hubli", "lat": 15.35, "lng": 75.12},
-            {"name": "Bengaluru APMC", "city": "Bengaluru", "lat": 12.97, "lng": 77.59},
-            {"name": "Mysuru APMC", "city": "Mysuru", "lat": 12.3, "lng": 76.65}
-        ]
-    },
-    "West Bengal (New Alluvial)": {
-        "soil": "New alluvial, highly fertile, pH 5.5-6.5, prone to waterlogging",
-        "climate": "Humid subtropical, heavy monsoon Jun-Oct, mild winters",
-        "avg_rainfall": "1400-1800mm annual",
-        "major_crops": ["Rice", "Jute", "Tea", "Vegetables", "Mustard"],
-        "high_risk_diseases": ["PATH-BLAST-MAG", "PATH-BACT-WILT"],
-        "risk_months": {"Blast": "Jul-Sep", "Wilt": "Jun-Aug"},
-        "icar_center": "CRRI / Bidhan Chandra KVK",
-        "lat": 22.9, "lng": 87.8,
-        "major_mandis": [
-            {"name": "Kolkata Market", "city": "Kolkata", "lat": 22.57, "lng": 88.36},
-            {"name": "Siliguri APMC", "city": "Siliguri", "lat": 26.72, "lng": 88.43},
-            {"name": "Burdwan Mandi", "city": "Burdwan", "lat": 23.23, "lng": 87.85},
-            {"name": "Medinipur Market", "city": "Medinipur", "lat": 22.42, "lng": 87.32}
-        ]
+    "Haryana (Semi-Arid)": {
+        "soil": "Sandy loam to clay loam, moderate fertility",
+        "rainfall": "300–600 mm",
+        "temperature": "Summer 40–48°C, Winter 3–15°C",
+        "major_crops": ["Wheat", "Rice", "Cotton", "Mustard", "Sugarcane"],
+        "disease_pressure": {"stripe_rust": "HIGH", "cotton_bollworm": "HIGH", "powdery_mildew_wheat": "MEDIUM"},
+        "risk_season": "November–February (rust); June–September (bollworm)",
+        "water_table": "Declining — over-extraction concern",
+        "icar_kvk": "CCS HAU Hisar; KVK Karnal"
     },
     "Uttar Pradesh (Gangetic Plains)": {
-        "soil": "Deep alluvial, loam to clay loam, pH 7.0-8.5, highly fertile",
-        "climate": "Sub-humid, hot summers, cold winters, monsoon Jul-Sep",
-        "avg_rainfall": "700-1000mm annual",
-        "major_crops": ["Wheat", "Rice", "Sugarcane", "Potato", "Mustard"],
-        "high_risk_diseases": ["PATH-RUST-PST", "PATH-ALT-BLIGHT"],
-        "risk_months": {"Rust": "Feb-Mar", "Blight": "Oct-Nov"},
-        "icar_center": "GBPUAT Pantnagar / IIPR Kanpur",
-        "lat": 26.8, "lng": 80.9,
-        "major_mandis": [
-            {"name": "Agra APMC", "city": "Agra", "lat": 27.18, "lng": 78.01},
-            {"name": "Kanpur Mandi", "city": "Kanpur", "lat": 26.45, "lng": 80.33},
-            {"name": "Lucknow Market", "city": "Lucknow", "lat": 26.85, "lng": 80.95},
-            {"name": "Varanasi APMC", "city": "Varanasi", "lat": 25.32, "lng": 82.97}
-        ]
+        "soil": "Alluvial, heavy calcareous, moderate-high fertility",
+        "rainfall": "700–1000 mm",
+        "temperature": "Summer 38–44°C, Winter 5–18°C",
+        "major_crops": ["Wheat", "Rice", "Sugarcane", "Potato", "Maize"],
+        "disease_pressure": {"stripe_rust": "HIGH", "rice_blast": "MEDIUM", "potato_late_blight": "HIGH"},
+        "risk_season": "Jan–Feb (rust); July–Sept (rice blast); Oct–Dec (potato blight)",
+        "water_table": "Variable 5–20 m",
+        "icar_kvk": "IARI New Delhi outreach; KVK Lucknow, Kanpur"
+    },
+    "Maharashtra (Deccan Plateau)": {
+        "soil": "Black cotton soil (Vertisol), high clay, high water retention",
+        "rainfall": "600–1400 mm (highly variable)",
+        "temperature": "Summer 35–42°C, Winter 15–28°C",
+        "major_crops": ["Cotton", "Sugarcane", "Soybean", "Onion", "Tomato", "Jowar"],
+        "disease_pressure": {"powdery_mildew_cotton": "HIGH", "cotton_bollworm": "HIGH", "early_blight": "MEDIUM"},
+        "risk_season": "June–October (Kharif pests); March–May (dry season diseases)",
+        "water_table": "Deep 30–60 m on plateau",
+        "icar_kvk": "VNMKV Parbhani; KVK Nashik, Pune"
+    },
+    "Karnataka (Red Lateritic)": {
+        "soil": "Red laterite, low organic matter, good drainage",
+        "rainfall": "700–1500 mm",
+        "temperature": "Mild 20–32°C year-round",
+        "major_crops": ["Rice", "Maize", "Tomato", "Cotton", "Sunflower", "Ragi"],
+        "disease_pressure": {"early_blight": "HIGH", "bacterial_wilt": "HIGH", "rice_blast": "MEDIUM", "maize_fall_armyworm": "HIGH"},
+        "risk_season": "July–November (blight season); May–August (fall armyworm)",
+        "water_table": "Variable 10–40 m",
+        "icar_kvk": "UAS Bengaluru; KVK Dharwad, Raichur"
+    },
+    "Tamil Nadu (Cauvery Delta)": {
+        "soil": "Clay loam alluvial in delta, red laterite elsewhere",
+        "rainfall": "900–1200 mm, northeast monsoon Oct–Dec",
+        "temperature": "Hot 28–38°C, no cold season",
+        "major_crops": ["Rice", "Sugarcane", "Cotton", "Maize", "Banana", "Groundnut"],
+        "disease_pressure": {"bacterial_leaf_blight": "HIGH", "rice_blast": "MEDIUM"},
+        "risk_season": "October–January (BLB peak); June–August (blast)",
+        "water_table": "Shallow 5–15 m in delta",
+        "icar_kvk": "TNAU Coimbatore; KVK Thanjavur"
+    },
+    "Andhra Pradesh (Coastal Tropical)": {
+        "soil": "Coastal alluvial, red loam inland",
+        "rainfall": "700–1200 mm",
+        "temperature": "Hot tropical 28–40°C",
+        "major_crops": ["Rice", "Cotton", "Chili", "Tobacco", "Groundnut", "Maize"],
+        "disease_pressure": {"bacterial_leaf_blight": "HIGH", "chili_anthracnose": "HIGH", "cotton_bollworm": "MEDIUM"},
+        "risk_season": "June–October (all Kharif diseases)",
+        "water_table": "Variable",
+        "icar_kvk": "ANGRAU Guntur; KVK Kurnool"
+    },
+    "West Bengal (New Alluvial)": {
+        "soil": "New alluvial, fertile, high humidity",
+        "rainfall": "1400–2000 mm",
+        "temperature": "Hot humid summer 32–38°C, mild winter 10–24°C",
+        "major_crops": ["Rice", "Potato", "Jute", "Tea", "Mustard"],
+        "disease_pressure": {"rice_blast": "HIGH", "bacterial_leaf_blight": "HIGH", "potato_late_blight": "HIGH"},
+        "risk_season": "July–October (rice diseases); November–January (potato blight)",
+        "water_table": "Shallow 3–8 m",
+        "icar_kvk": "Bidhan Chandra KVK; KVK Siliguri"
     },
     "Gujarat (Sandy Loam)": {
-        "soil": "Sandy loam to loamy sand, low organic matter, pH 7.5-8.5",
-        "climate": "Arid to semi-arid, hot dry summers, monsoon Jun-Sep",
-        "avg_rainfall": "350-700mm annual",
-        "major_crops": ["Cotton", "Groundnut", "Bajra", "Castor", "Wheat"],
-        "high_risk_diseases": ["PATH-MILDEW-COAT", "BIOT-STRESS-GEN"],
-        "risk_months": {"Mildew": "Nov-Jan", "Stress": "Apr-Jun"},
-        "icar_center": "AAU Anand / DGR Junagadh",
-        "lat": 22.2, "lng": 71.7,
-        "major_mandis": [
-            {"name": "Rajkot APMC", "city": "Rajkot", "lat": 22.3, "lng": 70.78},
-            {"name": "Ahmedabad Market", "city": "Ahmedabad", "lat": 23.02, "lng": 72.57},
-            {"name": "Surat APMC", "city": "Surat", "lat": 21.17, "lng": 72.83},
-            {"name": "Junagadh Mandi", "city": "Junagadh", "lat": 21.52, "lng": 70.47}
-        ]
+        "soil": "Sandy loam to loamy sand, low fertility",
+        "rainfall": "350–800 mm",
+        "temperature": "Hot dry 35–46°C summer, mild winter",
+        "major_crops": ["Cotton", "Groundnut", "Wheat", "Bajra", "Castor"],
+        "disease_pressure": {"cotton_bollworm": "HIGH", "powdery_mildew_cotton": "MEDIUM"},
+        "risk_season": "July–October (Kharif pests)",
+        "water_table": "Variable 15–50 m",
+        "icar_kvk": "AAU Anand; KVK Rajkot"
+    },
+    "Madhya Pradesh (Black Cotton)": {
+        "soil": "Black cotton (Vertisol) and red mixed",
+        "rainfall": "600–1200 mm",
+        "temperature": "Summer 40–46°C, Winter 6–20°C",
+        "major_crops": ["Wheat", "Soybean", "Cotton", "Chili", "Sugarcane"],
+        "disease_pressure": {"stripe_rust": "MEDIUM", "powdery_mildew_wheat": "MEDIUM", "chili_anthracnose": "MEDIUM"},
+        "risk_season": "November–February (rust); June–September (soybean diseases)",
+        "water_table": "Variable 10–30 m",
+        "icar_kvk": "JNKVV Jabalpur; KVK Indore"
+    },
+    "Rajasthan (Arid Loamy)": {
+        "soil": "Sandy loam to sand, very low organic matter",
+        "rainfall": "100–500 mm (highly variable)",
+        "temperature": "Extreme — summer 44–50°C, winter 2–15°C",
+        "major_crops": ["Wheat", "Bajra", "Mustard", "Groundnut", "Guar"],
+        "disease_pressure": {"stripe_rust": "MEDIUM", "powdery_mildew_wheat": "LOW"},
+        "risk_season": "November–February (Rabi diseases)",
+        "water_table": "Deep 30–80 m",
+        "icar_kvk": "CAZRI Jodhpur; KVK Jaipur"
+    },
+    "Odisha (Coastal Humid)": {
+        "soil": "Alluvial coastal, laterite inland",
+        "rainfall": "1200–1500 mm",
+        "temperature": "Hot humid 28–38°C",
+        "major_crops": ["Rice", "Maize", "Groundnut", "Sugarcane", "Potato"],
+        "disease_pressure": {"rice_blast": "HIGH", "bacterial_leaf_blight": "HIGH"},
+        "risk_season": "June–November (rice disease season)",
+        "water_table": "Shallow coastal 5–12 m",
+        "icar_kvk": "OUAT Bhubaneswar; KVK Cuttack"
+    },
+}
+
+# ═══════════════════════════════════════════════════════════════
+# MANDI / MSP PRICES
+# ═══════════════════════════════════════════════════════════════
+
+MANDI_PRICES = [
+    {"crop": "Wheat",         "state": "Punjab",      "mandi": "Khanna",     "modal_price": 2250, "msp_2025": 2275, "unit": "Rs/qtl"},
+    {"crop": "Rice (Common)", "state": "West Bengal", "mandi": "Kolkata",    "modal_price": 2100, "msp_2025": 2183, "unit": "Rs/qtl"},
+    {"crop": "Maize",         "state": "Bihar",       "mandi": "Patna",      "modal_price": 1950, "msp_2025": 2090, "unit": "Rs/qtl"},
+    {"crop": "Cotton",        "state": "Gujarat",     "mandi": "Rajkot",     "modal_price": 6200, "msp_2025": 7020, "unit": "Rs/qtl"},
+    {"crop": "Tomato",        "state": "Delhi",       "mandi": "Azadpur",    "modal_price": 2140, "msp_2025": None,  "unit": "Rs/qtl"},
+    {"crop": "Onion",         "state": "Maharashtra", "mandi": "Lasalgaon",  "modal_price": 1560, "msp_2025": None,  "unit": "Rs/qtl"},
+    {"crop": "Potato",        "state": "UP",          "mandi": "Agra",       "modal_price": 1080, "msp_2025": None,  "unit": "Rs/qtl"},
+    {"crop": "Soybean",       "state": "MP",          "mandi": "Indore",     "modal_price": 4400, "msp_2025": 4892, "unit": "Rs/qtl"},
+    {"crop": "Mustard",       "state": "Rajasthan",   "mandi": "Jaipur",     "modal_price": 5200, "msp_2025": 5950, "unit": "Rs/qtl"},
+    {"crop": "Groundnut",     "state": "Gujarat",     "mandi": "Junagadh",   "modal_price": 6100, "msp_2025": 6783, "unit": "Rs/qtl"},
+    {"crop": "Sugarcane",     "state": "UP",          "mandi": "Lucknow",    "modal_price": 370,  "msp_2025": 340,  "unit": "Rs/qtl"},
+    {"crop": "Chili (Dry)",   "state": "AP",          "mandi": "Guntur",     "modal_price": 15800,"msp_2025": None,  "unit": "Rs/qtl"},
+]
+
+# ═══════════════════════════════════════════════════════════════
+# GOVERNMENT SCHEMES DATA
+# ═══════════════════════════════════════════════════════════════
+
+GOVT_SCHEMES = {
+    "pm_kisan": {
+        "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+        "benefit": "Rs 6,000 per year in 3 equal instalments of Rs 2,000",
+        "eligibility": "All landholding farmer families with cultivable land",
+        "exclusions": "Former/current MPs, MLAs, Ministers; income tax payers; institutional landholders",
+        "how_to_apply": "Visit PM-KISAN portal pmkisan.gov.in or Common Service Centre (CSC)",
+        "documents": ["Aadhaar card", "Land records/Khasra", "Bank account with IFSC"]
+    },
+    "pmfby": {
+        "name": "PMFBY (Pradhan Mantri Fasal Bima Yojana)",
+        "benefit": "Crop insurance covering yield losses due to natural disasters, disease, pests",
+        "premium": "Kharif 2%, Rabi 1.5%, Annual Horticulture/Commercial 5%",
+        "how_to_apply": "Through bank at loan time, or CSC/insurance company before cut-off date",
+        "documents": ["Aadhaar", "Land records", "Bank passbook", "Crop sowing certificate"]
+    },
+    "kisan_credit_card": {
+        "name": "Kisan Credit Card (KCC)",
+        "benefit": "Short-term crop loan at 4% interest per annum (7% – 3% subvention = 4%)",
+        "credit_limit": "Up to Rs 3 lakh at concessional rate; above Rs 3 lakh at commercial rate",
+        "how_to_apply": "Apply at any bank or cooperative credit society with land records"
+    },
+    "soil_health_card": {
+        "name": "Soil Health Card Scheme",
+        "benefit": "Free soil testing and crop-wise fertilizer recommendation card",
+        "how_to_apply": "Contact local Agriculture Department or KVK for soil sample collection"
     }
 }
 
 # ═══════════════════════════════════════════════════════════════
-# MANDI PRICE DATABASE — Live-style data with regional comparison
+# AI AGENT PROMPTS
 # ═══════════════════════════════════════════════════════════════
 
-MANDI_PRICES: List[Dict] = [
-    {
-        "crop": "Tomato", "unit": "quintal", "modal_price": 2140, "min_price": 1800, "max_price": 2600,
-        "change_pct": 5.2, "mandi": "Azadpur, Delhi", "state": "Delhi",
-        "lat": 28.73, "lng": 77.18, "trend": "up",
-        "nearby": [
-            {"city": "Ghaziabad", "price": 2020, "mandi": "Ghaziabad APMC"},
-            {"city": "Faridabad", "price": 1980, "mandi": "Faridabad Market"},
-            {"city": "Sonipat", "price": 2100, "mandi": "Sonipat Mandi"}
-        ]
-    },
-    {
-        "crop": "Wheat", "unit": "quintal", "modal_price": 2250, "min_price": 2200, "max_price": 2300,
-        "change_pct": -1.1, "mandi": "Khanna, Punjab", "state": "Punjab",
-        "lat": 30.7, "lng": 76.22, "trend": "down",
-        "nearby": [
-            {"city": "Ludhiana", "price": 2240, "mandi": "Ludhiana APMC"},
-            {"city": "Amritsar", "price": 2260, "mandi": "Amritsar Grain Market"},
-            {"city": "Patiala", "price": 2230, "mandi": "Patiala Mandi"}
-        ]
-    },
-    {
-        "crop": "Rice (Basmati)", "unit": "quintal", "modal_price": 3800, "min_price": 3400, "max_price": 4200,
-        "change_pct": 2.3, "mandi": "Amritsar", "state": "Punjab",
-        "lat": 31.63, "lng": 74.87, "trend": "up",
-        "nearby": [
-            {"city": "Gurdaspur", "price": 3750, "mandi": "Gurdaspur APMC"},
-            {"city": "Pathankot", "price": 3820, "mandi": "Pathankot Market"},
-            {"city": "Batala", "price": 3780, "mandi": "Batala Mandi"}
-        ]
-    },
-    {
-        "crop": "Cotton", "unit": "quintal", "modal_price": 6200, "min_price": 5900, "max_price": 6500,
-        "change_pct": -0.8, "mandi": "Rajkot, Gujarat", "state": "Gujarat",
-        "lat": 22.3, "lng": 70.78, "trend": "down",
-        "nearby": [
-            {"city": "Junagadh", "price": 6150, "mandi": "Junagadh Mandi"},
-            {"city": "Amreli", "price": 6180, "mandi": "Amreli APMC"},
-            {"city": "Bhavnagar", "price": 6220, "mandi": "Bhavnagar Market"}
-        ]
-    },
-    {
-        "crop": "Potato", "unit": "quintal", "modal_price": 1080, "min_price": 900, "max_price": 1300,
-        "change_pct": 8.4, "mandi": "Agra, UP", "state": "Uttar Pradesh",
-        "lat": 27.18, "lng": 78.01, "trend": "up",
-        "nearby": [
-            {"city": "Mathura", "price": 1050, "mandi": "Mathura APMC"},
-            {"city": "Hathras", "price": 1100, "mandi": "Hathras Market"},
-            {"city": "Aligarh", "price": 1090, "mandi": "Aligarh Mandi"}
-        ]
-    },
-    {
-        "crop": "Onion", "unit": "quintal", "modal_price": 1560, "min_price": 1200, "max_price": 1900,
-        "change_pct": -3.2, "mandi": "Lasalgaon, MH", "state": "Maharashtra",
-        "lat": 20.12, "lng": 74.22, "trend": "down",
-        "nearby": [
-            {"city": "Nashik", "price": 1600, "mandi": "Nashik APMC"},
-            {"city": "Pune", "price": 1650, "mandi": "Pune Market"},
-            {"city": "Ahmednagar", "price": 1540, "mandi": "Ahmednagar Mandi"}
-        ]
-    }
-]
+AGENT_PROMPTS = {
+    "triage_farmer": """You are KrishiAI, the agricultural triage agent for Indian farmers. Your job is to generate a clear, plain-language farm advisory report.
 
-# ═══════════════════════════════════════════════════════════════
-# AI AGENT SYSTEM PROMPTS
-# ═══════════════════════════════════════════════════════════════
+The report MUST follow this exact structure with these section headers in ALL CAPS followed by colon:
 
-AGENT_PROMPTS: Dict[str, str] = {
-    "triage": """You are KrishiAI, a senior agricultural pathologist trained on ICAR India databases.
-Write a clinical crop triage report in plain professional text.
-Use NO bullet symbols, NO asterisks, NO markdown dashes.
-Structure with clearly labelled sections:
-SUSPECTED PATHOGEN, THREAT LEVEL, IMMEDIATE FIELD ACTIONS, CHEMICAL PRESCRIPTION, BIOLOGICAL PRESCRIPTION.
-Each section starts on a new line with the section name followed by a colon.
-Write in complete sentences. Be specific to the crop, growth stage, and Indian region provided.
-Recommend ICAR-registered compounds only. Mention specific dosages.""",
+WHAT WE FOUND: [2-3 sentence diagnosis of the crop problem in plain language]
 
-    "deep_diagnosis": """You are a senior plant pathologist conducting a deep clinical laboratory diagnosis.
-Write a detailed pathological assessment in professional plain text, no bullet points or symbols.
-Structure in these sections:
-PATHOGEN IDENTIFICATION AND CLASS, DISEASE MECHANISM AND SPREAD, CURRENT INFECTION STAGE,
-INTEGRATED PEST MANAGEMENT STRATEGY, LONG-TERM FIELD RECOVERY PLAN, FARMER ADVISORY.
-Each section clearly labelled. Use technical terminology but keep farmer advisory section in simple language.
-Base recommendations on ICAR guidelines. Specify dosages, timing, frequency.
-About 220 words total.""",
+CURRENT WEATHER AND SEASON: [1-2 sentences about regional climate risk for this disease]
 
-    "chatbot": """You are KrishiAI, a warm, knowledgeable agricultural advisor for Indian farmers and agronomists.
-You have expertise in:
-- Crop diseases, pests, and nutrient deficiencies across all Indian crops
-- Soil health, irrigation, and water management
-- Government schemes: PM-KISAN, Kisan Credit Card, PMFBY crop insurance, MSP prices
-- Organic farming, IPM, SRI rice method
-- APMC mandi prices and marketing advice
-- Seasonal crop calendars for all Indian states
-- ICAR, SAU and KVK resources
+WHAT YOU MUST DO TODAY: [3-4 specific immediate actions, numbered, simple language]
 
-Be warm, practical and specific. Reference ICAR recommendations when relevant.
-Respond in the same language the user writes in (Hindi or English).
-Keep responses to 120-150 words. For technical advice, always mention safety precautions.""",
+SPRAY RECOMMENDATION: [Chemical name, exact dosage, frequency, safety instructions]
 
-    "vlm_image": """You are a plant pathology Vision Language Model specialist.
-Analyze the crop field photograph and provide:
-1. VISUAL OBSERVATIONS: What you see in the image (leaf condition, color, texture, patterns)
-2. SYMPTOM IDENTIFICATION: Any disease symptoms, lesions, discoloration, necrosis patterns  
-3. AFFECTED AREA: Estimated percentage of visible plant area affected
-4. PATHOGEN HYPOTHESIS: Most likely pathogen class based on visual evidence
-5. CONFIDENCE: Your confidence level in this visual assessment
+NATURAL OPTION: [Biological/organic alternative with dosage]
 
-Write in plain text, no bullets. Technical but readable. About 80 words.
-If image quality is poor, state this and ask for a clearer photograph.""",
+3 MONTH OUTLOOK: [Month 1, Month 2, Month 3 — what to expect and do each month]
 
-    "pdf_report_farmer": """You are generating the farmer-facing section of a KrishiKonnect diagnostic report.
-Write in simple, clear language that a farmer with basic education can understand.
-Explain what disease was found, why it is dangerous, and exactly what the farmer must do today.
-Mention specific product names, amounts, and timing in simple terms.
-Include a reassurance that with proper treatment, crop recovery is possible.
-About 120 words. Use plain text, no symbols.""",
+Rules:
+- Write for a farmer with primary school education
+- Use simple Hindi-English mix terminology only if helpful
+- No scientific jargon without plain explanation
+- Be specific: exact product names, exact dosages
+- Refer to ICAR guidelines and local KVK resources
+- Keep each section 2-5 sentences maximum
+- Respond ONLY with the report — no preamble""",
 
-    "pdf_report_agronomist": """You are generating the agronomist-facing section of a KrishiKonnect diagnostic report.
-Write a technical summary for the field agronomist reviewing this case.
-Include pathogen taxonomy, infection pathway, resistance risk, economic threshold,
-recommended ICAR compounds with MRL compliance notes, and follow-up monitoring schedule.
-About 150 words. Technical and precise."""
+    "deep_diagnosis": """You are PathoVision, the pathological diagnosis AI agent for agronomists. You perform clinical-level crop disease analysis.
+
+Generate a detailed pathological assessment covering:
+1. Pathogen identification with confidence reasoning
+2. Disease cycle and infection mechanism in this agro-climate zone
+3. Estimated yield impact if untreated (% loss)
+4. Stage-appropriate chemical intervention with PHI compliance
+5. Resistance management rotation (chemical group alternation)
+6. Long-term IPM strategy aligned with ICAR protocols
+
+Format: Clinical paragraphs, approximately 180 words.
+Tone: Technical, precise — written for a certified agronomist.
+Use ICAR compound registry names and chemical groups where possible.
+Include preharvest interval compliance and FSSAI MRL considerations.""",
+
+    "farmer_advisory": """You are the Farmer Communication Agent. Convert the agronomist diagnosis into a warm, clear plain-language advisory for the farmer.
+
+The advisory must:
+- Open with what the problem is, in simple terms
+- Explain WHY the disease happened (climate, season, farming practice)
+- Give 3 numbered steps the farmer should do THIS WEEK
+- Explain the spray with exact name, amount per litre, and number of applications
+- Close with one encouraging sentence about crop recovery if treatment is applied
+
+Keep to 120 words. Use simple English. Avoid all technical terms.
+If the farmer is from Karnataka, Maharashtra, Punjab, or AP — use a warm regional greeting.""",
+
+    "agronomist_report": """You are the Agronomist Technical Reporting Agent. Generate technical notes for the case file.
+
+Include:
+- Pathogen full binomial name and taxonomic class
+- Recommended chemical groups with mode-of-action codes (FRAC/IRAC)
+- PHI (preharvest interval) and WHP (withholding period)
+- Resistance risk rating for the primary fungicide/insecticide
+- Economic threshold vs observed infestation level
+- Resistance management recommendations
+- Reference to relevant ICAR/CABI disease management protocol
+
+Format as structured technical notes, ~120 words. Use agronomic terminology.""",
+
+    "vlm_image": """You are PathoVision VLM, a visual language model specialising in crop disease diagnosis from field photographs.
+
+Analyse the uploaded image and provide:
+1. Visible symptom description (lesion morphology, colour, pattern, tissue affected)
+2. Most likely pathogen class (fungal/bacterial/viral/insect/abiotic)
+3. Disease severity estimate (mild/moderate/severe) and % leaf area affected
+4. Recommended laboratory confirmation test if any
+5. Confidence level (0-100%) in your visual assessment
+
+Keep response to 80 words maximum. Lead with the most likely diagnosis.
+If image quality is poor, state this and give best assessment possible.""",
+
+    "chatbot": """You are KrishiAI, a warm, knowledgeable Indian agricultural expert chatbot. You draw from:
+- ICAR crop disease profiles for all major Indian crops
+- Agropedia open agricultural encyclopedia
+- FAO AGRIS research database
+- Government scheme data — PM-KISAN, PMFBY, KCC, MSP prices
+- APMC mandi prices across 28 Indian states
+- IMD weather and seasonal crop calendars
+- IPM practices, SRI rice method, organic farming protocols
+- Soil health cards and micronutrient deficiency guides
+
+Rules:
+- Respond in the SAME LANGUAGE the user writes in (Hindi or English)
+- Be warm, practical, specific — like a trusted village agronomist
+- Give actionable advice with specific product names and dosages when relevant
+- Reference ICAR, KVK, or government schemes when helpful
+- Keep responses to ~140 words
+- Use plain text — no markdown, no bullets, no asterisks
+- If you don't know something specific, say so and suggest the user contact their local KVK""",
+
+    "pdf_report_farmer": """Generate a plain-language farm advisory section for a PDF report. 
+Write 3 clear paragraphs:
+1. What the disease is and what caused it
+2. What treatment was recommended and how to apply it
+3. What the farmer should expect over the next 4 weeks
+
+Use simple English. Max 200 words. No markdown formatting.""",
+
+    "pdf_report_agronomist": """Generate a technical agronomist section for a PDF report.
+Write 3 clinical paragraphs:
+1. Pathological assessment and disease cycle
+2. Prescribed chemical protocol with FRAC group, PHI, and MRL compliance notes
+3. Long-term IPM and resistance management recommendations
+
+Use technical agronomic language. ~220 words. Reference ICAR protocols.""",
 }
-
-# ═══════════════════════════════════════════════════════════════
-# GOVERNMENT SCHEMES DATABASE
-# ═══════════════════════════════════════════════════════════════
-
-GOVT_SCHEMES: List[Dict] = [
-    {
-        "name": "PM-KISAN",
-        "full_name": "Pradhan Mantri Kisan Samman Nidhi",
-        "benefit": "Rs 6,000 per year in 3 equal installments of Rs 2,000",
-        "eligibility": "All small and marginal farmers with cultivable land",
-        "how_to_apply": "Visit PM-KISAN portal pmkisan.gov.in or nearest CSC center",
-        "helpline": "155261"
-    },
-    {
-        "name": "PMFBY",
-        "full_name": "Pradhan Mantri Fasal Bima Yojana",
-        "benefit": "Crop insurance covering natural calamities, pests, diseases",
-        "eligibility": "All farmers growing notified crops in notified areas",
-        "premium": "Kharif 2%, Rabi 1.5%, Commercial/Horticulture 5% of sum insured",
-        "how_to_apply": "Through banks, insurance companies, or CSC centers before cut-off date",
-        "helpline": "14447"
-    },
-    {
-        "name": "KCC",
-        "full_name": "Kisan Credit Card",
-        "benefit": "Short-term credit at 4-7% interest for agricultural inputs",
-        "eligibility": "All farmers, tenant farmers, sharecroppers",
-        "credit_limit": "Based on land holding and crop cost",
-        "how_to_apply": "Visit any nationalized bank branch or cooperative bank",
-        "helpline": "Contact nearest bank"
-    }
-]
 
 # ═══════════════════════════════════════════════════════════════
 # HELPER FUNCTIONS
 # ═══════════════════════════════════════════════════════════════
 
-def get_disease_by_symptoms(symptoms: str) -> Dict:
-    """Match symptoms text to closest disease profile."""
-    sym = symptoms.lower()
-    if any(w in sym for w in ["blight", "ring", "target", "concentric", "brown spot"]):
-        return DISEASE_PROFILES["PATH-ALT-BLIGHT"]
-    elif any(w in sym for w in ["powder", "white coat", "mildew", "dusty"]):
-        return DISEASE_PROFILES["PATH-MILDEW-COAT"]
-    elif any(w in sym for w in ["rust", "pustule", "orange", "yellow stripe", "uredinio"]):
-        return DISEASE_PROFILES["PATH-RUST-PST"]
-    elif any(w in sym for w in ["wilt", "collapse", "droop", "vascular", "bacterial ooze"]):
-        return DISEASE_PROFILES["PATH-BACT-WILT"]
-    elif any(w in sym for w in ["blast", "spindle", "grey lesion", "neck rot"]):
-        return DISEASE_PROFILES["PATH-BLAST-MAG"]
-    else:
-        return DISEASE_PROFILES["BIOT-STRESS-GEN"]
+def get_disease_by_symptoms(crop: str, symptoms: str, region: str = "") -> dict:
+    """
+    Match disease profile from crop type and symptom keywords.
+    Returns best matching disease profile dict.
+    """
+    crop_lower = crop.lower()
+    sym_lower = symptoms.lower()
+
+    # Crop → candidate diseases
+    CROP_MAP = {
+        "tomato": ["early_blight", "late_blight", "bacterial_wilt", "abiotic_stress"],
+        "wheat":  ["stripe_rust", "powdery_mildew_wheat", "abiotic_stress"],
+        "rice":   ["rice_blast", "bacterial_leaf_blight", "abiotic_stress"],
+        "cotton": ["cotton_bollworm", "powdery_mildew_cotton", "abiotic_stress"],
+        "potato": ["potato_late_blight", "abiotic_stress"],
+        "maize":  ["maize_fall_armyworm", "abiotic_stress"],
+        "chili":  ["chili_anthracnose", "abiotic_stress"],
+    }
+
+    # Symptom keyword scoring
+    SYMPTOM_KEYWORDS = {
+        "early_blight":          ["concentric", "ring", "target", "brown spot", "halo", "alternaria"],
+        "late_blight":           ["water-soaked", "water soaked", "white mycelium", "greasy", "phytophthora", "rapid"],
+        "bacterial_wilt":        ["wilt", "droop", "collapse", "ooze", "vascular", "milky"],
+        "stripe_rust":           ["rust", "pustule", "orange", "yellow stripe", "linear", "uredinio"],
+        "powdery_mildew_wheat":  ["powder", "mildew", "white coat", "blumeria"],
+        "powdery_mildew_cotton": ["powdery", "white coating", "leaf curl", "drop"],
+        "rice_blast":            ["blast", "spindle", "grey lesion", "lesion", "magnaporthe", "neck"],
+        "bacterial_leaf_blight": ["water-soaked margin", "kresek", "blight", "straw", "xanthomonas"],
+        "cotton_bollworm":       ["boll", "bollworm", "frass", "hole", "helicoverpa", "larva"],
+        "potato_late_blight":    ["water-soaked", "dark brown", "internal browning", "tuber"],
+        "maize_fall_armyworm":   ["window", "whorl", "armyworm", "spodoptera", "frass", "hole"],
+        "chili_anthracnose":     ["sunken", "dieback", "fruit lesion", "anthracnose", "colletotrichum"],
+        "abiotic_stress":        ["yellow", "chlorosis", "tip burn", "stunted", "purple", "nutrient"],
+    }
+
+    candidates = []
+    for crop_key, diseases in CROP_MAP.items():
+        if crop_key in crop_lower:
+            candidates = diseases
+            break
+    if not candidates:
+        candidates = list(DISEASE_PROFILES.keys())
+
+    # Score each candidate
+    scores = {}
+    for disease_key in candidates:
+        if disease_key not in DISEASE_PROFILES:
+            continue
+        keywords = SYMPTOM_KEYWORDS.get(disease_key, [])
+        score = sum(1 for kw in keywords if kw in sym_lower)
+        scores[disease_key] = score
+
+    # Pick highest score, fallback to abiotic_stress
+    best = max(scores, key=scores.get) if scores else "abiotic_stress"
+    if scores.get(best, 0) == 0:
+        best = "abiotic_stress"
+
+    return DISEASE_PROFILES[best]
 
 
-def get_regional_data(region: str) -> Optional[Dict]:
-    """Get regional agro-climate profile."""
-    for key in REGIONAL_PROFILES:
+def get_regional_data(region: str) -> dict:
+    """Return regional agro-climate profile, partial match supported."""
+    for key, data in REGIONAL_PROFILES.items():
         if region.lower() in key.lower() or key.lower() in region.lower():
-            return REGIONAL_PROFILES[key]
-    return None
+            return data
+    # Fallback — generic India profile
+    return {
+        "soil": "Variable soil types across India",
+        "rainfall": "Varies by region",
+        "temperature": "Varies by region",
+        "major_crops": ["Rice", "Wheat", "Cotton", "Maize", "Tomato"],
+        "disease_pressure": {},
+        "risk_season": "Monsoon season June–October general risk",
+        "icar_kvk": "Contact nearest KVK"
+    }
 
 
-def build_ai_context(crop: str, stage: str, region: str, symptoms: str) -> str:
-    """Build rich context string for AI agents from knowledge base."""
-    disease = get_disease_by_symptoms(symptoms)
+def build_ai_context(crop: str, region: str, symptoms: str, stage: str = "") -> str:
+    """Build a rich context string to include in AI prompts."""
+    disease = get_disease_by_symptoms(crop, symptoms, region)
     regional = get_regional_data(region)
 
-    ctx = f"""
-KNOWLEDGE BASE CONTEXT (use this to ground your response):
+    context = f"""
+CROP CONTEXT:
+- Crop: {crop} | Stage: {stage} | Region: {region}
+- Farmer-reported symptoms: {symptoms}
 
-DISEASE MATCH: {disease['name']} ({disease['pathogen']})
-Class: {disease['class']}
-Severity: {disease['severity']}
-Spread mechanism: {disease['spread']}
-Optimal conditions: {disease['conditions']}
+BEST-MATCH DISEASE PROFILE (ICAR reference):
+- Disease: {disease['name']}
+- Pathogen: {disease['pathogen']} ({disease['class']})
+- Severity: {disease['severity']}
+- Key symptoms: {', '.join(disease['symptoms'][:3])}
+- Favourable conditions: {', '.join(disease['conditions'][:2])}
+- Primary chemical Rx: {disease['chemical_rx']['primary']}
+- Biological Rx: {disease['bio_rx']['primary']}
+- IPM: {'; '.join(disease['ipm'][:3])}
 
-CHEMICAL OPTIONS:
-Primary: {disease['chemical_rx']['primary']}
-Secondary: {disease['chemical_rx']['secondary']}
-Preharvest interval: {disease['chemical_rx']['preharvest_interval']}
+REGIONAL AGRO-CLIMATE:
+- Soil: {regional['soil']}
+- Rainfall: {regional['rainfall']}
+- Temperature: {regional['temperature']}
+- Risk season: {regional.get('risk_season', 'N/A')}
+- ICAR/KVK: {regional.get('icar_kvk', 'Contact nearest KVK')}
+""".strip()
 
-BIOLOGICAL OPTIONS:
-Primary: {disease['bio_rx']['primary']}
-Foliar: {disease['bio_rx']['foliar']}
-
-ICAR IPM NOTES: {'; '.join(disease['ipm'][:3])}
-    """
-    if regional:
-        ctx += f"""
-REGIONAL CONTEXT ({region}):
-Soil: {regional['soil']}
-Climate: {regional['climate']}
-High-risk diseases in this region: {', '.join(regional['high_risk_diseases'])}
-ICAR Center: {regional['icar_center']}
-    """
-    return ctx.strip()
+    return context
