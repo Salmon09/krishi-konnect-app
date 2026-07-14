@@ -14,9 +14,8 @@
 }
 
 /* Prevent overscroll bounce (rubber-band) on Android WebView */
-html, body {
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+body {
+  overscroll-behavior-y: contain;
 }
 
 /* Disable iOS/Android tap highlight on interactive elements */
